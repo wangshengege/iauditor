@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="DEFAULT_TINT_COLOR">#99000000</color>
+    <color name="white">#FFFFFF</color>
+    <color name="transparent">#00000000</color>
+    <color name="trans_bg">#4ff7f7f7</color>
+    <color name="bg">#f7f7f7</color>
+    <color name="gray">#CACACA</color>
+    <color name="gray_line">#CDCDCD</color>
+    <color name="black">#404040</color>
+    <color name="red">#FF0000</color>
+    <!-- 状态栏颜色 -->
+    <color name="stateBar">#df65C6F0</color>
+    <color name="primary_light">#9F9E9E</color>
+    <color name="background_tab_pressed">#04146C</color>
+
+</resources>

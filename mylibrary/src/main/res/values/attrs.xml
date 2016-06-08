@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+     <!-- 侧滑删除zidingyiview的attrs -->
+    <declare-styleable name="SwipeLayout">
+        <attr name="drag_edge" format="enum">
+            <enum name="left" value="0" />
+            <enum name="right" value="1" />
+            <enum name="top" value="2" />
+            <enum name="bottom" value="3" />
+        </attr>
+        <attr name="show_mode" format="enum">
+            <enum name="lay_down" value="0" />
+            <enum name="pull_out" value="1" />
+        </attr>
+    </declare-styleable>
+      <!-- ViewPager的横向指示条 -->
+    <declare-styleable name="PagerSlidingTabStrip">
+        <attr name="pstsIndicatorColor" format="color" />
+        <attr name="pstsUnderlineColor" format="color" />
+        <attr name="pstsDividerColor" format="color" />
+        <attr name="pstsIndicatorHeight" format="dimension" />
+        <attr name="pstsUnderlineHeight" format="dimension" />
+        <attr name="pstsDividerPadding" format="dimension" />
+        <attr name="pstsTabPaddingLeftRight" format="dimension" />
+        <attr name="pstsScrollOffset" format="dimension" />
+        <attr name="pstsTabBackground" format="reference" />
+        <attr name="pstsShouldExpand" format="boolean" />
+        <attr name="pstsTextAllCaps" format="boolean" />
+        <attr name="selectedTabTextColor" format="color" />
+    </declare-styleable>
+       <!--CustomProgressView的属性 -->
+    <declare-styleable name="CustomProgressView">
+        <attr name="outsideColor" format="color" /><!-- 有值的颜色 -->
+        <attr name="insideColor" format="color" /><!-- 没值的颜色 -->
+        <attr name="unitWide" format="dimension"/><!-- 格子的长度 -->
+        <attr name="unitRadius" format="dimension"/><!-- 一个格子的角度 -->
+        <attr name="cpv_max" format="integer"/><!-- 最大值 -->
+        <attr name="process" format="integer"/><!-- 当前值 -->
+    </declare-styleable>
+
+    <declare-styleable name="AutoLayout_Layout">
+        <attr name="layout_auto_textSizeBaseWidth" format="boolean" />
+    </declare-styleable>
+</resources>
