@@ -1,5 +1,7 @@
 package com.jointeach.iauditor.ui.fragment;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
@@ -39,7 +41,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
  * 日期: 2016/5/30.
  * 介绍：审计预览
  */
-public class AuditPriviewFragment extends BaseMainFragment {
+public class AuditPriviewFragment extends BaseMainFragment implements View.OnClickListener{
     @ViewInject(R.id.btn_audit)
     private Button btn_audit;
     @ViewInject(R.id.btn_priview)
@@ -100,15 +102,40 @@ public class AuditPriviewFragment extends BaseMainFragment {
         initView();
     }
 
+    @Override
+    public void onClick(View v) {
+        if(v==btn_audit){
+            if(entity.getReport()==null){
+                Tools.showToast(self,"没有报告，请在编辑中保存审计报告！");
+            }else {
+                String[] tos = {"1605560675@qq.com"};
+                senMail(tos,entity.getTitle(), entity.getReport());
+            }
+        }else if(v==btn_priview){
+            PriviewActivity.startAction(self,mId);
+        }
+    }
+    private void senMail(String[] tos,String title,String fpath){
+        Intent intent = new Intent(Intent.ACTION_SEND);
+      //  String[] ccs = { "gegeff@gmail.com" };
+        //String[] bccs = {"fdafda@gmail.com"};
+        intent.putExtra(Intent.EXTRA_EMAIL, tos);//收件
+        //intent.putExtra(Intent.EXTRA_CC, ccs);//抄送
+        //intent.putExtra(Intent.EXTRA_BCC, bccs);//密送
+        intent.putExtra(Intent.EXTRA_TEXT, "这是我的审计报告!主题是："+title);
+        intent.putExtra(Intent.EXTRA_SUBJECT, "审计报告");
+
+        intent.putExtra(Intent.EXTRA_STREAM, Uri.parse("file://"+fpath));
+        intent.setType("image/*");
+        intent.setType("message/rfc882");
+        Intent.createChooser(intent, "Choose Email Client");
+        startActivity(intent);
+    }
     private void initView() {
         btn_audit.setText("发送报告");
+        btn_audit.setOnClickListener(this);
         btn_priview.setVisibility(View.VISIBLE);
-        btn_priview.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                PriviewActivity.startAction(self,mId);
-            }
-        });
+        btn_priview.setOnClickListener(this);
         ImgLoadUtils.loadImageRes(entity.getIcPath(),iv_acator);
         tv_title.setText(entity.getTitle());
         tv_sub_title.setText(entity.getDescribe());

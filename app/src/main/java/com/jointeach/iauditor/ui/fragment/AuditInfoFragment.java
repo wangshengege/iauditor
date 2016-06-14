@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import com.jointeach.iauditor.R;
 import com.jointeach.iauditor.common.JKApplication;
+import com.jointeach.iauditor.dao.AppDao;
 import com.jointeach.iauditor.entity.InfoEntity;
 import com.jointeach.iauditor.entity.MouldEntity;
 import com.jointeach.iauditor.ui.base.BaseAuditFragment;
@@ -37,7 +38,6 @@ public class AuditInfoFragment extends BaseAuditFragment {
     private MouldEntity entity;
     private int mId;
     private EditText[] eds;
-    DbUtils db;
     public static AuditInfoFragment newInstance(int mId) {
         AuditInfoFragment fragment = new AuditInfoFragment();
         Bundle bundle=new Bundle();
@@ -51,13 +51,12 @@ public class AuditInfoFragment extends BaseAuditFragment {
         super.onCreate(savedInstanceState);
         Bundle bundle=getArguments();
         mId=bundle.getInt("mId");
-        db = DbUtils.create(JKApplication.getContext());
         initData();
     }
 
     private void initData() {
         try {
-            entity=db.findFirst(Selector.from(MouldEntity.class).where("id","=",String.valueOf(mId))
+            entity=AppDao.db.findFirst(Selector.from(MouldEntity.class).where("id","=",mId)
             .and("type","=","1"));
         } catch (DbException e) {
             e.printStackTrace();
@@ -118,10 +117,6 @@ public class AuditInfoFragment extends BaseAuditFragment {
         entity.setTitle(eds[0].getText().toString());
         entity.setAuthor(eds[1].getText().toString());
         entity.setLocation(eds[2].getText().toString());
-        try {
-            db.saveOrUpdate(entity);
-        } catch (DbException e) {
-            e.printStackTrace();
-        }
+        AppDao.saveMould(entity);
     }
 }

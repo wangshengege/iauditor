@@ -8,6 +8,8 @@ import com.lidroid.xutils.DbUtils;
 import com.lidroid.xutils.db.sqlite.Selector;
 import com.lidroid.xutils.exception.DbException;
 
+import org.mylibrary.utils.LogTools;
+
 import java.util.List;
 
 /**
@@ -16,6 +18,7 @@ import java.util.List;
  * 介绍：获取数据
  */
 public class AppDao {
+    private static final String TAG="AppDao";
     public static DbUtils db=DbUtils.create(JKApplication.getContext());
         /**获取模版或者审计*/
         public static MouldEntity getMould(int mId){
@@ -25,6 +28,7 @@ public class AppDao {
                         .where("id","=",mId));
             } catch (DbException e) {
                 e.printStackTrace();
+                LogTools.e(TAG,e.getMessage());
             }
             return mouldEntity;
     }
@@ -34,6 +38,7 @@ public class AppDao {
             db.saveOrUpdate(mould);
         } catch (DbException e) {
             e.printStackTrace();
+            LogTools.e(TAG,e.getMessage());
         }
     }
     /**获取问题群组*/
@@ -45,6 +50,7 @@ public class AppDao {
             return gItms;
         } catch (DbException e) {
             e.printStackTrace();
+            LogTools.e(TAG,e.getMessage());
         }
         return gItms;
     }
@@ -58,6 +64,7 @@ public class AppDao {
             return items;
         } catch (DbException e) {
             e.printStackTrace();
+            LogTools.e(TAG,e.getMessage());
         }
         return items;
     }
@@ -69,6 +76,7 @@ public class AppDao {
             .where("type","=",isAudit?1:0));
         } catch (DbException e) {
             e.printStackTrace();
+            LogTools.e(TAG,e.getMessage());
         }
         return moulds;
     }
@@ -78,6 +86,7 @@ public class AppDao {
             db.save(en);
         } catch (DbException e) {
             e.printStackTrace();
+            LogTools.e(TAG,e.getMessage());
         }
     }
     /**保存问题*/
@@ -86,6 +95,7 @@ public class AppDao {
             db.save(en);
         } catch (DbException e) {
             e.printStackTrace();
+            LogTools.e(TAG,e.getMessage());
         }
     }
 }
