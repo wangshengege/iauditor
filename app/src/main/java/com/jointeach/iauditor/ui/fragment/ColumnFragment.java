@@ -11,8 +11,14 @@ import android.view.ViewGroup;
 import com.jointeach.iauditor.R;
 import com.jointeach.iauditor.adapter.ColumnAdapter;
 import com.jointeach.iauditor.adapter.MouldAdapter;
+import com.jointeach.iauditor.common.JKApplication;
+import com.jointeach.iauditor.dao.AppDao;
+import com.jointeach.iauditor.entity.AuditGroupEntity;
+import com.jointeach.iauditor.entity.AuditItemEntity;
 import com.jointeach.iauditor.entity.ColumnEntity;
 import com.jointeach.iauditor.entity.MouldEntity;
+import com.jointeach.iauditor.entity.QusBaseEntity;
+import com.jointeach.iauditor.ui.base.BaseAuditFragment;
 import com.lidroid.xutils.DbUtils;
 import com.lidroid.xutils.ViewUtils;
 import com.lidroid.xutils.db.sqlite.Selector;
@@ -20,6 +26,7 @@ import com.lidroid.xutils.exception.DbException;
 import com.lidroid.xutils.view.annotation.ViewInject;
 
 import org.mylibrary.base.AbstractBaseFragment;
+import org.mylibrary.biz.DbBaseEntity;
 import org.mylibrary.utils.Tools;
 
 import java.util.ArrayList;
@@ -30,11 +37,11 @@ import java.util.List;
  * 日期: 2016/5/26.
  * 介绍：字段
  */
-public class ColumnFragment extends AbstractBaseFragment {
+public class ColumnFragment extends BaseAuditFragment {
     @ViewInject(R.id.recycler)
     private RecyclerView recycler;
     private ColumnAdapter columnAdapter;
-    private ArrayList<ColumnEntity> columnItems=new ArrayList<>();
+    private ArrayList<QusBaseEntity> columnItems=new ArrayList<>();
     private int mId;
     public static ColumnFragment newInstance(int mId){
         ColumnFragment fragment=new ColumnFragment();
@@ -55,19 +62,13 @@ public class ColumnFragment extends AbstractBaseFragment {
     }
     //加载数据
     private void initData(int mId) {
-        DbUtils db=DbUtils.create(self);
-        try {
-            List<ColumnEntity> list=db.findAll(Selector.from(ColumnEntity.class)
-                    .where("mId","=",String.valueOf(mId))
-                    .and("isGroup","=","1"));
-            for (ColumnEntity en:list) {
-                columnItems.add(en);
-                List<ColumnEntity> cList=db.findAll(Selector.from(ColumnEntity.class)
-               .where("pId","=",String.valueOf(en.getId())) );
-                columnItems.addAll(cList);
+        List<AuditGroupEntity> goups= AppDao.getGroups(mId);
+        for (AuditGroupEntity gE:goups) {
+            columnItems.add(gE);
+            List<AuditItemEntity> ies=AppDao.getQus(gE.getId(),gE.getMouldId());
+            for (AuditItemEntity ie:ies) {
+                columnItems.add(ie);
             }
-        } catch (DbException e) {
-            e.printStackTrace();
         }
     }
 

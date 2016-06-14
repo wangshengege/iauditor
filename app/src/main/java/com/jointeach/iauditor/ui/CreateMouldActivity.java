@@ -44,6 +44,7 @@ public class CreateMouldActivity  extends AbstractBaseActivity{
     private  Toolbar toolbar;
     @ViewInject(R.id.fab)
     private FloatingActionButton fab;
+    private CreateMouldAdapter mouldAdapter;
     //页面位置
     private int index;
     private int mId;
@@ -87,7 +88,8 @@ public class CreateMouldActivity  extends AbstractBaseActivity{
         });
         toolbar.setOnMenuItemClickListener(onMenuItemClick);
         pager.setCurrentItem(3);
-        pager.setAdapter(new CreateMouldAdapter(getSupportFragmentManager(),mId));
+        mouldAdapter=new CreateMouldAdapter(getSupportFragmentManager(),mId);
+        pager.setAdapter(mouldAdapter);
         indicator.setViewPager(pager);
         indicator.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             ObjectAnimator inAn;//出现动画
@@ -187,5 +189,13 @@ public class CreateMouldActivity  extends AbstractBaseActivity{
         MenuInflater menuInflater = getMenuInflater();
         menuInflater.inflate(R.menu.preview_menu, menu);
         return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(mouldAdapter!=null && mouldAdapter.getItem(2)!=null){
+            mouldAdapter.getItem(2).onActivityResult(requestCode,resultCode,data);
+        }
     }
 }

@@ -11,8 +11,10 @@ import android.view.ViewGroup;
 import com.jointeach.iauditor.R;
 import com.jointeach.iauditor.adapter.CoverAdapter;
 import com.jointeach.iauditor.adapter.MouldAdapter;
+import com.jointeach.iauditor.common.JKApplication;
 import com.jointeach.iauditor.entity.CoverEntity;
 import com.jointeach.iauditor.entity.MouldEntity;
+import com.jointeach.iauditor.ui.base.BaseAuditFragment;
 import com.lidroid.xutils.DbUtils;
 import com.lidroid.xutils.ViewUtils;
 import com.lidroid.xutils.db.sqlite.Selector;
@@ -30,7 +32,7 @@ import java.util.List;
  * 日期: 2016/5/26.
  * 介绍：封面
  */
-public class CoverFragment extends AbstractBaseFragment {
+public class CoverFragment extends BaseAuditFragment {
     @ViewInject(R.id.recycler)
     private RecyclerView recycler;
     private CoverAdapter coverAdapter;
@@ -55,7 +57,7 @@ public class CoverFragment extends AbstractBaseFragment {
     }
     //加载数据
     private void initData() {
-        DbUtils db=DbUtils.create(self);
+        DbUtils db=DbUtils.create(JKApplication.getContext());
         try {
             List<CoverEntity> list=db.findAll(Selector.from(CoverEntity.class).where("mId","=",String.valueOf(mId)));
             if(list!=null) {

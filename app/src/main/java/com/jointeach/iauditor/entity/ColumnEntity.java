@@ -10,11 +10,22 @@ import org.mylibrary.biz.DbBaseEntity;
  */
 public class ColumnEntity extends DbBaseEntity {
     private String title;
-    private int type;
     private int pId;
     private int mId;
     //1是群组2不是群组
     private int isGroup;
+
+    private int type=0;
+    //0为模版1为审计
+    private int isAudit;
+
+    public int getIsAudit() {
+        return isAudit;
+    }
+
+    public void setIsAudit(int isAudit) {
+        this.isAudit = isAudit;
+    }
 
     public int getpId() {
         return pId;

@@ -5,13 +5,17 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
+import android.widget.Button;
 import android.widget.ExpandableListView;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.jointeach.iauditor.R;
+import com.jointeach.iauditor.common.JKApplication;
 import com.jointeach.iauditor.entity.AuditGroupEntity;
 import com.jointeach.iauditor.entity.AuditItemEntity;
+import com.lidroid.xutils.DbUtils;
+import com.lidroid.xutils.exception.DbException;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -26,6 +30,7 @@ public class AuditDetailAdapter extends BaseExpandableListAdapter {
     private HashMap<Integer, ArrayList<AuditItemEntity>> items;
     private HashMap<Integer,Boolean> isOpen;
     private ExpandableListView plv;
+    DbUtils db;
     public AuditDetailAdapter(ArrayList<AuditGroupEntity> groups, HashMap<Integer, ArrayList<AuditItemEntity>> items,ExpandableListView plv) {
         this.groups = groups;
         this.items = items;
@@ -34,6 +39,7 @@ public class AuditDetailAdapter extends BaseExpandableListAdapter {
         for (int i = 0; i <groups.size() ; i++) {
             isOpen.put(i,false);
         }
+        db=DbUtils.create(JKApplication.getContext());
     }
 
     @Override
@@ -116,9 +122,67 @@ public class AuditDetailAdapter extends BaseExpandableListAdapter {
         }
         AuditItemEntity entity = (AuditItemEntity) getChild(groupPosition, childPosition);
         holder.tv_title.setText(entity.getTitle());
+        holder.btn_qus_ncan.setTag(entity);
+        holder.btn_qus_ncan.setOnClickListener(qus_nocan);
+        holder.btn_qus_no.setTag(entity);
+        holder.btn_qus_no.setOnClickListener(qus_no);
+        holder.btn_qus_yes.setTag(entity);
+        holder.btn_qus_yes.setOnClickListener(qus_yes);
+       switch (entity.getState()){
+           case 1:
+               holder.setNoState();
+               holder.btn_qus_yes.setSelected(true);
+               break;
+           case 2:
+               holder.setNoState();
+               holder.btn_qus_no.setSelected(true);
+               break;
+           case 3:
+               holder.setNoState();
+               holder.btn_qus_ncan.setSelected(true);
+               break;
+           default:
+               holder.setNoState();
+               break;
+       }
         return convertView;
     }
-
+    private View.OnClickListener qus_yes=new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            AuditItemEntity entity= (AuditItemEntity) v.getTag();
+            entity.setState(1);
+            v.setSelected(true);
+            upData(entity);
+        }
+    };
+    private View.OnClickListener qus_no=new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            AuditItemEntity entity= (AuditItemEntity) v.getTag();
+            entity.setState(2);
+            v.setSelected(true);
+            upData(entity);
+        }
+    };
+    private View.OnClickListener qus_nocan=new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            AuditItemEntity entity= (AuditItemEntity) v.getTag();
+            entity.setState(3);
+            v.setSelected(true);
+            upData(entity);
+        }
+    };
+    //更新数据
+    private void upData(AuditItemEntity entity){
+        try {
+            db.saveOrUpdate(entity);
+        } catch (DbException e) {
+            e.printStackTrace();
+        }
+        notifyDataSetChanged();
+    }
     @Override
     public boolean isChildSelectable(int groupPosition, int childPosition) {
         return true;
@@ -139,10 +203,20 @@ public class AuditDetailAdapter extends BaseExpandableListAdapter {
     class ViewHolder {
         View itemView;
         TextView tv_title;
-
+        Button btn_qus_yes;
+        Button btn_qus_no;
+        Button btn_qus_ncan;
         public ViewHolder(View itemView) {
             this.itemView = itemView;
             tv_title = (TextView) itemView.findViewById(R.id.tv_title);
+            btn_qus_yes= (Button) itemView.findViewById(R.id.btn_qus_yes);
+            btn_qus_no= (Button) itemView.findViewById(R.id.btn_qus_no);
+            btn_qus_ncan= (Button) itemView.findViewById(R.id.btn_qus_ncan);
+        }
+        public void setNoState(){
+            btn_qus_yes.setSelected(false);
+            btn_qus_no.setSelected(false);
+            btn_qus_ncan.setSelected(false);
         }
     }
 }

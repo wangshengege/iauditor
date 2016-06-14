@@ -708,6 +708,14 @@ public class Utils {
     }
 
     /**
+     * @param uri
+     * @return
+     */
+    public static Bitmap createChattingImageByUri(Uri uri) {
+        return createChattingImage(0, null, null, uri, 0.0F, 400, 800);
+    }
+
+    /**
      * 通过得到的intent获取图片路径
      *
      * @param context
@@ -784,14 +792,6 @@ public class Utils {
 
         LogTools.showLogi(TAG, "resolve photo from intent failed ");
         return null;
-    }
-
-    /**
-     * @param uri
-     * @return
-     */
-    public static Bitmap createChattingImageByUri(Uri uri) {
-        return createChattingImage(0, null, null, uri, 0.0F, 400, 800);
     }
 
     /**

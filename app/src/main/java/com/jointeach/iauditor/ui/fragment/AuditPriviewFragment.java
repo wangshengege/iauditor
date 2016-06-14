@@ -10,10 +10,14 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.jointeach.iauditor.R;
+import com.jointeach.iauditor.common.ImgLoadUtils;
+import com.jointeach.iauditor.dao.AppDao;
 import com.jointeach.iauditor.entity.ColumnEntity;
 import com.jointeach.iauditor.entity.InfoEntity;
 import com.jointeach.iauditor.entity.MouldEntity;
 import com.jointeach.iauditor.ui.EditAuditActivity;
+import com.jointeach.iauditor.ui.PriviewActivity;
+import com.jointeach.iauditor.ui.base.BaseMainFragment;
 import com.lidroid.xutils.DbUtils;
 import com.lidroid.xutils.ViewUtils;
 import com.lidroid.xutils.db.sqlite.Selector;
@@ -28,12 +32,14 @@ import org.mylibrary.utils.Tools;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.hdodenhof.circleimageview.CircleImageView;
+
 /**
  * 作者: ws
  * 日期: 2016/5/30.
  * 介绍：审计预览
  */
-public class AuditPriviewFragment extends AbstractBaseFragment {
+public class AuditPriviewFragment extends BaseMainFragment {
     @ViewInject(R.id.btn_audit)
     private Button btn_audit;
     @ViewInject(R.id.btn_priview)
@@ -45,7 +51,8 @@ public class AuditPriviewFragment extends AbstractBaseFragment {
     @ViewInject(R.id.tv_sub_title)
     private TextView tv_sub_title;
     private ArrayList<InfoEntity> infoItems;
-
+    @ViewInject(R.id.iv_acator)
+    private CircleImageView iv_acator;
     private int mId;
     private MouldEntity entity;
     public static AuditPriviewFragment newInstance(int mId) {
@@ -61,9 +68,11 @@ public class AuditPriviewFragment extends AbstractBaseFragment {
         super.onCreate(savedInstanceState);
         Bundle bundle = getArguments();
         mId = bundle.getInt("mId");
-        DbUtils db = DbUtils.create(self);
+        getData();
+    }
+    private void getData(){
         try {
-            entity=db.findFirst(Selector.from(MouldEntity.class).where("id","=",String.valueOf(mId)));
+            entity= AppDao.db.findFirst(Selector.from(MouldEntity.class).where("id","=",mId));
         } catch (DbException e) {
             e.printStackTrace();
             Tools.showToast(self,"数据出错");
@@ -74,7 +83,6 @@ public class AuditPriviewFragment extends AbstractBaseFragment {
             ((AbstractBaseActivity)self).finish();
         }
     }
-
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -84,9 +92,24 @@ public class AuditPriviewFragment extends AbstractBaseFragment {
         return super.onCreateView(inflater, container, savedInstanceState);
     }
 
+    @Override
+    public void updata() {
+        super.updata();
+        getData();
+        ll_content.removeAllViews();
+        initView();
+    }
+
     private void initView() {
         btn_audit.setText("发送报告");
         btn_priview.setVisibility(View.VISIBLE);
+        btn_priview.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                PriviewActivity.startAction(self,mId);
+            }
+        });
+        ImgLoadUtils.loadImageRes(entity.getIcPath(),iv_acator);
         tv_title.setText(entity.getTitle());
         tv_sub_title.setText(entity.getDescribe());
         infoItems = new ArrayList<>();
@@ -113,4 +136,5 @@ public class AuditPriviewFragment extends AbstractBaseFragment {
     private void toAudit(View v) {
         EditAuditActivity.startAction(self,mId);
     }
+
 }

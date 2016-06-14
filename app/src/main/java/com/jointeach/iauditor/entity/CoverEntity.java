@@ -13,7 +13,16 @@ public class CoverEntity extends DbBaseEntity {
     private int type;
     private int mId;
     private String value;
+    //0为模版1为审计
+    private int isAudit;
 
+    public int getIsAudit() {
+        return isAudit;
+    }
+
+    public void setIsAudit(int isAudit) {
+        this.isAudit = isAudit;
+    }
     public String getValue() {
         return value;
     }

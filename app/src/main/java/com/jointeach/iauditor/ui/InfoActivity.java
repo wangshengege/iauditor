@@ -10,6 +10,8 @@ import android.view.MenuItem;
 import android.view.View;
 
 import com.jointeach.iauditor.R;
+import com.jointeach.iauditor.entity.UpdataBack;
+import com.jointeach.iauditor.ui.base.BaseMainFragment;
 import com.jointeach.iauditor.ui.fragment.AuditPriviewFragment;
 import com.jointeach.iauditor.ui.fragment.MouldFragment;
 import com.jointeach.iauditor.ui.fragment.MouldPriviewFragment;
@@ -18,6 +20,8 @@ import org.mylibrary.base.AbstractBaseActivity;
 import org.mylibrary.base.AbstractBaseFragment;
 import org.mylibrary.utils.Tools;
 
+import de.greenrobot.event.EventBus;
+
 /**
  * 作者: ws
  * 日期: 2016/5/27.
@@ -25,6 +29,7 @@ import org.mylibrary.utils.Tools;
  */
 public class InfoActivity extends AbstractBaseActivity {
     private int mId;
+    private BaseMainFragment fragment;
     /**
      * 模板和审计的信息预览的启动方法
      * @param type 0是模版 1是审计
@@ -51,6 +56,12 @@ public class InfoActivity extends AbstractBaseActivity {
         }
         initToolbar(type);
         getSupportFragmentManager().beginTransaction().add(R.id.fl_content,getFragment(type)).commit();
+        EventBus.getDefault().register(this,"upData",UpdataBack.class);
+    }
+    public void upData(UpdataBack back){
+        if(back.isAudit && fragment!=null){
+        fragment.updata();
+        }
     }
     //初始化toolbar
     private void initToolbar(int type) {
@@ -73,8 +84,7 @@ public class InfoActivity extends AbstractBaseActivity {
     }
 
     //获取相应的界面
-    private AbstractBaseFragment getFragment(int type){
-        AbstractBaseFragment fragment=null;
+    private BaseMainFragment getFragment(int type){
         if(type==0){
             fragment=MouldPriviewFragment.newInstance(mId);
         }else{

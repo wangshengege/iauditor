@@ -5,13 +5,21 @@ import org.mylibrary.biz.BaseEntity;
 /**
  * 作者: ws
  * 日期: 2016/5/30.
- * 介绍：
+ * 介绍：信息条目
  */
 public class InfoEntity extends BaseEntity {
     private String title;
     private String subTitle;
-    private int state;
-    private int pid;//模版id
+    private int type;
+
+    public int getType() {
+        return type;
+    }
+
+    public void setType(int type) {
+        this.type = type;
+    }
+
     public InfoEntity() {
     }
 
@@ -20,13 +28,6 @@ public class InfoEntity extends BaseEntity {
         this.subTitle = subTitle;
     }
 
-    public int getPid() {
-        return pid;
-    }
-
-    public void setPid(int pid) {
-        this.pid = pid;
-    }
 
     public String getTitle() {
         return title;
@@ -44,11 +45,4 @@ public class InfoEntity extends BaseEntity {
         this.subTitle = subTitle;
     }
 
-    public int getState() {
-        return state;
-    }
-
-    public void setState(int state) {
-        this.state = state;
-    }
 }

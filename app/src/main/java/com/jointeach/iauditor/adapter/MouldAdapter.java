@@ -10,6 +10,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.jointeach.iauditor.R;
+import com.jointeach.iauditor.common.ImgLoadUtils;
 import com.jointeach.iauditor.common.JKApplication;
 import com.jointeach.iauditor.entity.MouldEntity;
 import com.jointeach.iauditor.ui.InfoActivity;
@@ -19,6 +20,8 @@ import com.lidroid.xutils.view.annotation.ViewInject;
 import org.mylibrary.utils.Tools;
 
 import java.util.ArrayList;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 /**
  * 作者: ws
@@ -54,16 +57,17 @@ public class MouldAdapter  extends RecyclerView.Adapter<MouldAdapter.ViewHolder>
         holder.tv_describe.setText(entity.getDescribe());
         holder.tv_revise.setText(Tools.getFormatTime(entity.getLastRevise(), "yyyy/MM/d"));
         holder.tv_title.setText(entity.getTitle());
-        if(type==0 || entity.getState()==0){
+        ImgLoadUtils.loadImageRes(entity.getIcPath(),holder.iv_icon);
+        if(type==0){//模版不显示状态
             holder.tv_state.setVisibility(View.GONE);
-        }else{
+        }else{//审计显示状态
             holder.tv_state.setVisibility(View.VISIBLE);
-            if(entity.getState()==1){//未完成
-                holder.tv_state.setText("未完成");
-                holder.tv_state.setTextColor(Color.RED);
-            }else{
+            if(entity.getState()==2){//完成
                 holder.tv_state.setText("已完成");
                 holder.tv_state.setTextColor(Color.GREEN);
+            }else{
+                holder.tv_state.setText("未完成");
+                holder.tv_state.setTextColor(Color.RED);
             }
         }
         holder.item.setTag(position);
@@ -93,11 +97,11 @@ public class MouldAdapter  extends RecyclerView.Adapter<MouldAdapter.ViewHolder>
         TextView tv_describe;
         @ViewInject(R.id.tv_revise)
         TextView tv_revise;
-        @ViewInject(R.id.iv_icon)
-        ImageView iv_icon;
         @ViewInject(R.id.tv_state)
         TextView tv_state;
         View item;
+        @ViewInject(R.id.iv_icon)
+        CircleImageView iv_icon;
         public ViewHolder(View itemView) {
             super(itemView);
             item=itemView;

@@ -8,7 +8,7 @@ import org.mylibrary.biz.DbBaseEntity;
  * 日期: 2016/5/26.
  * 介绍：
  */
-public class MouldEntity extends DbBaseEntity {
+public class MouldEntity extends DbBaseEntity implements Cloneable{
     //模版图标
     private String icPath;
     //标题
@@ -17,8 +17,6 @@ public class MouldEntity extends DbBaseEntity {
     private String describe="";
     //最后修改时间
     private long lastRevise;
-    //模版的id
-    private int mouldId;
     //状态0是不显示，1是未完成，2是已完成
     private int state;
     //0为模版1为审计
@@ -29,6 +27,15 @@ public class MouldEntity extends DbBaseEntity {
     private String author="";
     private int score;
     private String location="";
+    private String report;
+
+    public String getReport() {
+        return report;
+    }
+
+    public void setReport(String report) {
+        this.report = report;
+    }
 
     public String getLocation() {
         return location;
@@ -126,11 +133,14 @@ public class MouldEntity extends DbBaseEntity {
         this.lastRevise = lastRevise;
     }
 
-    public int getMouldId() {
-        return mouldId;
-    }
-
-    public void setMouldId(int mouldId) {
-        this.mouldId = mouldId;
+    @Override
+    public Object clone() {
+        MouldEntity stu = null;
+        try{
+            stu = (MouldEntity)super.clone();
+        }catch(CloneNotSupportedException e) {
+            e.printStackTrace();
+        }
+        return stu;
     }
 }

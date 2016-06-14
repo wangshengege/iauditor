@@ -3,9 +3,10 @@ package com.jointeach.iauditor.ui;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
-import android.support.v4.view.ViewPager;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.ImageView;
@@ -14,14 +15,13 @@ import android.widget.TextView;
 
 import com.jointeach.iauditor.R;
 import com.jointeach.iauditor.adapter.EditAuditPagAdapter;
-import com.jointeach.iauditor.entity.MouldEntity;
-import com.lidroid.xutils.DbUtils;
-import com.lidroid.xutils.db.sqlite.Selector;
-import com.lidroid.xutils.exception.DbException;
+import com.jointeach.iauditor.entity.UpdataBack;
 import com.lidroid.xutils.view.annotation.ViewInject;
+import com.lidroid.xutils.view.annotation.event.EventBase;
 
 import org.mylibrary.base.AbstractBaseActivity;
-import org.mylibrary.utils.Tools;
+
+import de.greenrobot.event.EventBus;
 
 /**
  * 作者: ws
@@ -44,8 +44,8 @@ public class EditAuditActivity extends AbstractBaseActivity implements View.OnCl
     private TextView tv_page;
     @ViewInject(R.id.tv_page_title)//标题栏副标题
     private TextView tv_page_title;
-    private MouldEntity entity;
     private int mId;
+    private Handler handler;
     public static void startAction(Context ctx,int mId){
         Intent intent=new Intent(ctx,EditAuditActivity.class);
         intent.putExtra("mId",mId);
@@ -61,6 +61,23 @@ public class EditAuditActivity extends AbstractBaseActivity implements View.OnCl
         Intent intent=getIntent();
         mId=intent.getIntExtra("mId",-1);
         initView();
+        handler=new Handler(){
+            @Override
+            public void handleMessage(Message msg) {
+                super.handleMessage(msg);
+                if(msg.what==1){
+                    if(mAdapter!=null){
+                        if(mAdapter.fragments!=null){
+                            for (int i = 0; i < mAdapter.fragments.length; i++) {
+                                mAdapter.fragments[i].audit();
+                            }
+                        }
+                    }
+                    EventBus.getDefault().post(new UpdataBack(true) );
+                    finish();
+                }
+            }
+        };
     }
 
 
@@ -70,7 +87,7 @@ public class EditAuditActivity extends AbstractBaseActivity implements View.OnCl
         fab.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+            handler.sendEmptyMessage(1);
             }
         });
         ll_audit_title.setOnClickListener(this);
@@ -126,6 +143,17 @@ public class EditAuditActivity extends AbstractBaseActivity implements View.OnCl
         }else{
             ll_audit_content.setVisibility(View.VISIBLE);
             iv_icon.setImageResource(R.drawable.ic_collapse_nor);
+        }
+    }
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if(mAdapter!=null){
+        if(mAdapter.fragments!=null){
+            for (int i = 0; i < mAdapter.fragments.length; i++) {
+                mAdapter.fragments[i].quit();
+            }
+        }
         }
     }
 }

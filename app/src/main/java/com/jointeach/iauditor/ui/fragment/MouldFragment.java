@@ -10,7 +10,9 @@ import android.view.ViewGroup;
 
 import com.jointeach.iauditor.R;
 import com.jointeach.iauditor.adapter.MouldAdapter;
+import com.jointeach.iauditor.common.JKApplication;
 import com.jointeach.iauditor.entity.MouldEntity;
+import com.jointeach.iauditor.ui.base.BaseMainFragment;
 import com.lidroid.xutils.DbUtils;
 import com.lidroid.xutils.ViewUtils;
 import com.lidroid.xutils.db.sqlite.Selector;
@@ -28,41 +30,52 @@ import java.util.List;
  * 日期: 2016/5/25.
  * 介绍：模版
  */
-public class MouldFragment extends AbstractBaseFragment {
+public class MouldFragment extends BaseMainFragment {
     @ViewInject(R.id.recycler)
     private RecyclerView recycler;
     private MouldAdapter mouldAdapter;
     private ArrayList<MouldEntity> mouldItems;
+    DbUtils db;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        initData();
+        db = DbUtils.create(JKApplication.getContext());
+        mouldItems = new ArrayList<>();
+        getData();
     }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        rootView=inflater.inflate(R.layout.fragment_mould,null);
-        ViewUtils.inject(this,rootView);
+        rootView = inflater.inflate(R.layout.fragment_mould, null);
+        ViewUtils.inject(this, rootView);
         initView();
         return super.onCreateView(inflater, container, savedInstanceState);
     }
 
-    private void initData() {
-        mouldItems=new ArrayList<>();
-        DbUtils db = DbUtils.create(self);
+    private void getData() {
         try {
-            List<MouldEntity> items=db.findAll(Selector.from(MouldEntity.class).where("type","=","0"));
+            List<MouldEntity> items = db.findAll(Selector.from(MouldEntity.class).where("type", "=", "0"));
+            mouldItems.clear();
             mouldItems.addAll(items);
         } catch (DbException e) {
             e.printStackTrace();
         }
     }
 
-    private void initView(){
+    @Override
+    public void updata() {
+        super.updata();
+        getData();
+        if (mouldAdapter != null) {
+            mouldAdapter.notifyDataSetChanged();
+        }
+    }
+
+    private void initView() {
         recycler.setLayoutManager(new LinearLayoutManager(self));
-        mouldAdapter= new MouldAdapter(mouldItems,self);
+        mouldAdapter = new MouldAdapter(mouldItems, self);
         recycler.setAdapter(mouldAdapter);
     }
 }

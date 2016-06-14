@@ -4,6 +4,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
+import com.jointeach.iauditor.ui.base.BaseMainFragment;
 import com.jointeach.iauditor.ui.fragment.AuditFragment;
 import com.jointeach.iauditor.ui.fragment.MouldFragment;
 
@@ -18,14 +19,20 @@ import org.mylibrary.utils.Tools;
 public class MainPagerAdapter extends FragmentPagerAdapter {
     /** Tab标题 */
     private static final String[] TITLE = new String[] { "模版", "审计"};
-    private AbstractBaseFragment[] fragments=new AbstractBaseFragment[TITLE.length];
+    private BaseMainFragment[] fragments=new BaseMainFragment[TITLE.length];
     public MainPagerAdapter(FragmentManager fm) {
         super(fm);
     }
-
+    public void updata(boolean isAudit){
+        if(isAudit){
+            fragments[1].updata();
+        }else{
+            fragments[0].updata();
+        }
+    }
     @Override
     public Fragment getItem(int position) {
-        AbstractBaseFragment fragment=fragments[position];
+        BaseMainFragment fragment=fragments[position];
         if (Tools.isEmpty(fragment)){
             if(position==0){
                 fragment=new MouldFragment();

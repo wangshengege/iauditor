@@ -10,7 +10,9 @@ import android.view.ViewGroup;
 
 import com.jointeach.iauditor.R;
 import com.jointeach.iauditor.adapter.MouldAdapter;
+import com.jointeach.iauditor.common.JKApplication;
 import com.jointeach.iauditor.entity.MouldEntity;
+import com.jointeach.iauditor.ui.base.BaseMainFragment;
 import com.lidroid.xutils.DbUtils;
 import com.lidroid.xutils.ViewUtils;
 import com.lidroid.xutils.db.sqlite.Selector;
@@ -28,7 +30,7 @@ import java.util.List;
  * 日期: 2016/5/25.
  * 介绍：审计界面
  */
-public class AuditFragment extends AbstractBaseFragment {
+public class AuditFragment extends BaseMainFragment {
     @ViewInject(R.id.recycler)
     private RecyclerView recycler;
     private MouldAdapter mouldAdapter;
@@ -42,7 +44,7 @@ public class AuditFragment extends AbstractBaseFragment {
 
     private void initData() {
         mouldItems=new ArrayList<>();
-        DbUtils db = DbUtils.create(self);
+        DbUtils db = DbUtils.create(JKApplication.getContext());
         try {
             List<MouldEntity> items=db.findAll(Selector.from(MouldEntity.class).where("type","=","1"));
             mouldItems.addAll(items);

@@ -7,10 +7,28 @@ import org.mylibrary.biz.DbBaseEntity;
  * 日期: 2016/6/7.
  * 介绍：审计条目
  */
-public class AuditItemEntity extends DbBaseEntity {
+public class AuditItemEntity extends QusBaseEntity implements Cloneable {
     private int type;//审计类型
-    private String title;
+
+    //0是未操作，1是是，2是否，3是不适用
     private int state;//审计状态信息
+    private int mId;
+    private int gId;
+    public int getgId() {
+        return gId;
+    }
+
+    public void setgId(int gId) {
+        this.gId = gId;
+    }
+
+    public int getmId() {
+        return mId;
+    }
+
+    public void setmId(int mId) {
+        this.mId = mId;
+    }
 
     public int getType() {
         return type;
@@ -20,19 +38,24 @@ public class AuditItemEntity extends DbBaseEntity {
         this.type = type;
     }
 
-    public String getTitle() {
-        return title;
-    }
 
-    public void setTitle(String title) {
-        this.title = title;
-    }
 
     public int getState() {
         return state;
     }
-
+    /**0是未操作，1是是，2是否，3是不适用*/
     public void setState(int state) {
         this.state = state;
+    }
+
+    @Override
+    public Object clone()  {
+        AuditItemEntity itemEntity=null;
+        try {
+            itemEntity= (AuditItemEntity) super.clone();
+        } catch (CloneNotSupportedException e) {
+            e.printStackTrace();
+        }
+        return itemEntity;
     }
 }

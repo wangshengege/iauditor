@@ -7,18 +7,26 @@
     <TextView
         android:id="@+id/tv_title"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="1:sbjhsbj"/>
+        android:layout_height="wrap_content"/>
     <Button
+        android:id="@+id/btn_qus_yes"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@drawable/qus_yes_selector"
+        android:layout_marginTop="10dp"
         android:text="是"/>
     <Button
+        android:id="@+id/btn_qus_no"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@drawable/qus_no_selector"
+        android:layout_marginTop="10dp"
         android:text="否"/>
     <Button
+        android:id="@+id/btn_qus_ncan"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/qus_nocan_selector"
         android:text="不使用"/>
 </LinearLayout>

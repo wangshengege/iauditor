@@ -3,6 +3,7 @@ package com.jointeach.iauditor.adapter;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentPagerAdapter;
 
+import com.jointeach.iauditor.ui.base.BaseAuditFragment;
 import com.jointeach.iauditor.ui.fragment.ColumnFragment;
 import com.jointeach.iauditor.ui.fragment.CoverFragment;
 import com.jointeach.iauditor.ui.fragment.DetailsFragment;
@@ -16,16 +17,15 @@ import org.mylibrary.base.AbstractBaseFragment;
  */
 public class CreateMouldAdapter extends FragmentPagerAdapter {
     private static final String[] TITLE = new String[] { "字段","封面", "详细说明"};
-    private AbstractBaseFragment[] fragments=new AbstractBaseFragment[TITLE.length];
+    private BaseAuditFragment[] fragments=new BaseAuditFragment[TITLE.length];
     private int mid;
     public CreateMouldAdapter(android.support.v4.app.FragmentManager fm,int mid) {
         super(fm);
         this.mid=mid;
     }
-
     @Override
     public Fragment getItem(int position) {
-        AbstractBaseFragment fragment=fragments[position];
+        BaseAuditFragment fragment=fragments[position];
         if(fragment==null){
             switch (position){
                 case 0:

@@ -16,9 +16,12 @@ import android.widget.ImageView;
 import com.jointeach.iauditor.adapter.MainPagerAdapter;
 import com.jointeach.iauditor.common.AppConfig;
 import com.jointeach.iauditor.common.JKApplication;
+import com.jointeach.iauditor.entity.AuditGroupEntity;
+import com.jointeach.iauditor.entity.AuditItemEntity;
 import com.jointeach.iauditor.entity.ColumnEntity;
 import com.jointeach.iauditor.entity.CoverEntity;
 import com.jointeach.iauditor.entity.MouldEntity;
+import com.jointeach.iauditor.entity.UpdataBack;
 import com.jointeach.iauditor.ui.CreateMouldActivity;
 import com.jointeach.iauditor.ui.SelectMouldActivity;
 import com.lidroid.xutils.DbUtils;
@@ -30,6 +33,9 @@ import org.mylibrary.base.AbstractBaseActivity;
 import org.mylibrary.common.CommonFunction;
 import org.mylibrary.utils.Tools;
 import org.mylibrary.view.PagerSlidingTabStrip;
+
+import de.greenrobot.event.EventBus;
+
 /**
  * 作者: ws
  * 日期: 2016/5/25.
@@ -40,6 +46,7 @@ public class MainActivity extends AbstractBaseActivity{
     private PagerSlidingTabStrip slidingTabStrip;
     @ViewInject(R.id.pager)
     private ViewPager pager;
+    MainPagerAdapter mAdapter;
     //当前页面
     private int index;
     @Override
@@ -48,67 +55,11 @@ public class MainActivity extends AbstractBaseActivity{
         setViewId(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        if(!CommonFunction.getBoolean(AppConfig.ISADDMOULD,false)) {
-            DbUtils db = DbUtils.create(this);
-            initData(db,true);//模拟一个模版
-            initData(db,false);//模拟一个审计
-        }
         initView();
+        EventBus.getDefault().register(this,"upData",UpdataBack.class);
     }
-    private void initData(DbUtils db,boolean isAudit) {
-        MouldEntity en=new MouldEntity();
-        en.setCreateTime(Tools.getTimeStamp());
-        en.setDescribe("这是我的模版");
-        en.setTitle("我的模版");
-        en.setId(1);
-        en.setAuthor("ws");
-        en.setIndustry("建筑");
-        en.setcIndustry("装修");
-        en.setLastRevise(Tools.getTimeStamp());
-        if(isAudit){
-            en.setType(1);
-        }
-        ColumnEntity group=new ColumnEntity();
-        group.setTitle("第一个群组");
-        group.setmId(en.getId());
-        group.setIsGroup(1);
-        group.setType(1);
-        group.setId(1);
-        ColumnEntity cC=new ColumnEntity();
-        cC.setmId(en.getId());
-        cC.setTitle("第一选项");
-        cC.setpId(group.getId());
-        cC.setIsGroup(0);
-        cC.setType(2);
-        CoverEntity cE1=new CoverEntity();
-        cE1.setTitle("标题");
-        cE1.setmId(en.getId());
-        CoverEntity cE2=new CoverEntity();
-        cE2.setTitle("创建日期");
-        cE2.setmId(en.getId());
-        CoverEntity cE3=new CoverEntity();
-        cE3.setTitle("作者");
-        cE3.setmId(en.getId());
-        CoverEntity cE4=new CoverEntity();
-        cE4.setTitle("地点");
-        cE4.setmId(en.getId());
-        CoverEntity cE5=new CoverEntity();
-        cE5.setTitle("参与人员");
-        cE5.setmId(en.getId());
-
-        try {
-            db.save(en);
-            db.save(group);
-            db.save(cC);
-            db.save(cE1);
-            db.save(cE2);
-            db.save(cE3);
-            db.save(cE4);
-            db.save(cE5);
-            CommonFunction.putBoolean(AppConfig.ISADDMOULD,true);
-        } catch (DbException e) {
-            e.printStackTrace();
-        }
+    public void upData(UpdataBack back){
+            mAdapter.updata(back.isAudit);
     }
 
     @OnClick(R.id.fab)
@@ -122,7 +73,8 @@ public class MainActivity extends AbstractBaseActivity{
     //初始化界面
     private void initView(){
         pager.setCurrentItem(2);
-        pager.setAdapter(new MainPagerAdapter(getSupportFragmentManager()));
+        mAdapter=new MainPagerAdapter(getSupportFragmentManager());
+        pager.setAdapter(mAdapter);
         slidingTabStrip.setViewPager(pager);
         slidingTabStrip.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
@@ -146,7 +98,7 @@ public class MainActivity extends AbstractBaseActivity{
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if(keyCode==event.KEYCODE_BACK){
             if(Tools.getTimeStamp()-time<1000){
-                JKApplication.getInstance().exit();
+               finish();
             }else{
                 Tools.showToast(self,"再按一次退出");
                 time=Tools.getTimeStamp();
