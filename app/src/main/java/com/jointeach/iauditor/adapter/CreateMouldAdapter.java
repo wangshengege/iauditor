@@ -17,7 +17,7 @@ import org.mylibrary.base.AbstractBaseFragment;
  */
 public class CreateMouldAdapter extends FragmentPagerAdapter {
     private static final String[] TITLE = new String[] { "字段","封面", "详细说明"};
-    private BaseAuditFragment[] fragments=new BaseAuditFragment[TITLE.length];
+    public BaseAuditFragment[] fragments=new BaseAuditFragment[TITLE.length];
     private int mid;
     public CreateMouldAdapter(android.support.v4.app.FragmentManager fm,int mid) {
         super(fm);

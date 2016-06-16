@@ -18,8 +18,8 @@
             android:layout_height="60dp"
             android:layout_marginLeft="10dp"
             android:src="@drawable/page5"
-            app:civ_border_width="2dp"
-            app:civ_border_color="#FF000000"/>
+            app:civ_border_width="1dp"
+            app:civ_border_color="@color/colorAccent"/>
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -32,7 +32,8 @@
                 android:layout_height="wrap_content"
                 android:singleLine="true"
                 android:textColor="@color/black"
-                android:textSize="15sp"
+                android:textSize="13sp"
+                android:lines="1"
                 android:text="模版"/>
             <TextView
                 android:id="@+id/tv_describe"
@@ -40,7 +41,7 @@
                 android:layout_height="wrap_content"
                 android:singleLine="true"
                 android:textColor="@color/colorPrimary"
-                android:textSize="15sp"
+                android:textSize="11sp"
                 android:layout_marginTop="2dp"
                 android:text="描述"/>
             <TextView
@@ -50,7 +51,7 @@
                 android:singleLine="true"
                 android:textColor="@color/material_blue_grey_800"
                 android:layout_marginTop="2dp"
-                android:textSize="13sp"
+                android:textSize="12sp"
                 android:text="最后修改："/>
 
             <TextView
@@ -58,14 +59,14 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="2dp"
-                android:textSize="13sp"
+                android:textSize="12sp"
                 android:text="未完成"/>
         </LinearLayout>
         <ImageView
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_marginRight="5dp"
-            android:src="@drawable/ic_chevron_right_black_48dp"/>
+            android:src="@drawable/ic_arrow_drop_right_black_48dp"/>
     </LinearLayout>
     <View
         style="@style/horizontalLine"/>

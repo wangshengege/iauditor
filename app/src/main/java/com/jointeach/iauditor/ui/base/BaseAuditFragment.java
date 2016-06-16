@@ -10,4 +10,5 @@ import org.mylibrary.base.AbstractBaseFragment;
 public class BaseAuditFragment extends AbstractBaseFragment {
     public void audit(){};
     public void quit(){};
+    public void addItem(){};
 }

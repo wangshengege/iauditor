@@ -12,6 +12,6 @@
     <!-- 状态栏颜色 -->
     <color name="stateBar">#df65C6F0</color>
     <color name="primary_light">#9F9E9E</color>
-    <color name="background_tab_pressed">#04146C</color>
+    <color name="background_tab_pressed">#124381</color>
 
 </resources>

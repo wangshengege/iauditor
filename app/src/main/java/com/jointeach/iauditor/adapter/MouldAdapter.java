@@ -64,7 +64,7 @@ public class MouldAdapter  extends RecyclerView.Adapter<MouldAdapter.ViewHolder>
             holder.tv_state.setVisibility(View.VISIBLE);
             if(entity.getState()==2){//完成
                 holder.tv_state.setText("已完成");
-                holder.tv_state.setTextColor(Color.GREEN);
+                holder.tv_state.setTextColor(Color.parseColor("#90C634"));
             }else{
                 holder.tv_state.setText("未完成");
                 holder.tv_state.setTextColor(Color.RED);

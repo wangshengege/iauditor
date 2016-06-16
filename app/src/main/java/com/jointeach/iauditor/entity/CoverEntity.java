@@ -1,6 +1,5 @@
 package com.jointeach.iauditor.entity;
 
-import org.mylibrary.biz.BaseEntity;
 import org.mylibrary.biz.DbBaseEntity;
 
 /**
@@ -8,8 +7,9 @@ import org.mylibrary.biz.DbBaseEntity;
  * 日期: 2016/5/27.
  * 介绍：封面条目
  */
-public class CoverEntity extends DbBaseEntity {
+public class CoverEntity extends DbBaseEntity implements Cloneable{
     private String title;
+    //1是创建日期，2是作者，3是地点，4是参与者
     private int type;
     private int mId;
     private String value;
@@ -53,5 +53,16 @@ public class CoverEntity extends DbBaseEntity {
 
     public void setmId(int mId) {
         this.mId = mId;
+    }
+
+    @Override
+    public Object clone()  {
+        CoverEntity coverEntity=null;
+        try {
+            coverEntity= (CoverEntity) super.clone();
+        } catch (CloneNotSupportedException e) {
+            e.printStackTrace();
+        }
+        return coverEntity;
     }
 }

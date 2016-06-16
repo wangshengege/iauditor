@@ -15,5 +15,38 @@
     <android.support.v4.view.ViewPager
         android:id="@+id/vp"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="0dp"
+        android:layout_weight="1"/>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:background="@color/colorPrimary">
+        <ImageView
+            android:id="@+id/iv_left"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:background="@drawable/left_selector"/>
+        <View
+            android:layout_width="1dp"
+            android:layout_height="40dp"
+            android:layout_marginLeft="5dp"
+            android:background="@color/white"
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@id/iv_left"/>
+        <ImageView
+            android:id="@+id/iv_right"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_alignParentRight="true"
+            android:background="@drawable/right_selector"/>
+        <View
+            android:layout_width="1dp"
+            android:layout_height="40dp"
+            android:layout_marginLeft="5dp"
+            android:background="@color/white"
+            android:layout_centerVertical="true"
+            android:layout_toLeftOf="@id/iv_right"/>
+    </RelativeLayout>
 </LinearLayout>

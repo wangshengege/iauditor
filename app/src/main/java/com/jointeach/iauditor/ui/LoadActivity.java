@@ -1,9 +1,13 @@
 package com.jointeach.iauditor.ui;
 
 import android.os.Bundle;
+import android.view.ViewGroup;
+import android.widget.ImageView;
 
 import com.jointeach.iauditor.MainActivity;
+import com.jointeach.iauditor.R;
 import com.jointeach.iauditor.common.AppConfig;
+import com.jointeach.iauditor.common.ImgLoadUtils;
 import com.jointeach.iauditor.common.JKApplication;
 import com.jointeach.iauditor.dao.AppDao;
 import com.jointeach.iauditor.entity.AuditGroupEntity;
@@ -28,79 +32,79 @@ import java.util.List;
  * 介绍：
  */
 public class LoadActivity extends AbstractBaseActivity {
+    private String[] groups={"群组1","群组2"};
+    private String[][] ques={{"wen1","w2"},{"w3","4"}};
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (!CommonFunction.getBoolean(AppConfig.ISADDMOULD, false)) {
+        ImageView iv=new ImageView(self);
+        iv.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+        ImgLoadUtils.getImageLoader().displayImage("drawable://"+ R.drawable.load,iv);
+        setContentView(iv);
             new Thread() {
                 @Override
                 public void run() {
                     super.run();
-                    DbUtils db = DbUtils.create(JKApplication.getContext());
+
+                    if(!CommonFunction.getBoolean(AppConfig.ISADDMOULD, false)){
                     try {
-                        initData(db,false,2);//模拟一个模版
+                        initData(AppDao.db,false,2);//模拟一个模版
                         initQus(false);
                         initCover(false);
                     } catch (DbException e) {
                         e.printStackTrace();
                     }
-                    try {
-                        initData(db, true,1);//模拟一个审计
+                /*    try {
+                        initData(AppDao.db, true,1);//模拟一个审计
                         initQus(true);
                         initCover(true);
                     } catch (DbException e) {
                         e.printStackTrace();
                     }
-
+*/
                     CommonFunction.putBoolean(AppConfig.ISADDMOULD, true);
-                    Tools.toActivity(self, MainActivity.class);
+                        try {
+                            sleep(500);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }else{
+                        try {
+                            sleep(1000);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
+
+                    Tools.toActivity(self, LoginActivity.class);
                     finish();
                 }
             }.start();
-        } else {
-            Tools.toActivity(self, MainActivity.class);
-            finish();
         }
-    }
+    //初始化问题
     private void initQus(boolean isAudit) throws DbException{
         MouldEntity mouldEntity=null;
-             mouldEntity= AppDao.db.findFirst(Selector.from(MouldEntity.class)
-            .where("type","=",isAudit?"1":"0"));
-        AuditGroupEntity gE1 = new AuditGroupEntity();
-        gE1.setTitle("第1组"+(isAudit?"审计":"模版")+"问题");
-        gE1.setMouldId(mouldEntity.getId());
-        gE1.setIsAudit(1);
-        AuditGroupEntity gE2 = new AuditGroupEntity();
-        gE2.setTitle("第2组"+(isAudit?"审计":"模版")+"问题");
-        gE2.setMouldId(mouldEntity.getId());
-        gE2.setIsAudit(1);
-        AppDao.saveGroup(gE1);
-        List<AuditGroupEntity> gs= AppDao.getGroups(mouldEntity.getId());
-        AuditGroupEntity a=gs.get(gs.size()-1);
-        for (int i = 0; i <3 ; i++) {
-            AuditItemEntity iE = new AuditItemEntity();
-            iE.setTitle("问题:" + 1);
-            iE.setmId(a.getMouldId());
-            iE.setgId(a.getId());
-            if (isAudit) {
-                iE.setIsAudit(1);
+        mouldEntity= AppDao.db.findFirst(Selector.from(MouldEntity.class)
+                .where("type","=",isAudit?"1":"0"));
+        for (int i = 0; i < groups.length; i++) {
+            String group=groups[i];
+            AuditGroupEntity gE=new AuditGroupEntity();
+            gE.setTitle(group);
+            gE.setMouldId(mouldEntity.getId());
+            gE.setIsAudit(isAudit?1:0);
+            AppDao.saveGroup(gE);
+            List<AuditGroupEntity> gs= AppDao.getGroups(mouldEntity.getId());
+            AuditGroupEntity a=gs.get(gs.size()-1);//存储小组完成后，获取该小组
+            for (int j = 0; j < ques[i].length; j++) {
+                String que=ques[i][j];
+                AuditItemEntity iE = new AuditItemEntity();
+                iE.setTitle(que);
+                iE.setmId(a.getMouldId());
+                iE.setgId(a.getId());
+                iE.setIsAudit(isAudit?1:0);
+                AppDao.saveQus(iE);
             }
-            AppDao.saveQus(iE);
         }
-        AppDao.saveGroup(gE2);
-        List<AuditGroupEntity> gs2= AppDao.getGroups(mouldEntity.getId());
-        AuditGroupEntity a2=gs2.get(gs2.size()-1);
-        for (int i = 0; i < 3; i++) {
-            AuditItemEntity iE1 = new AuditItemEntity();
-            iE1.setTitle("问题:" + 2);
-            iE1.setmId(a2.getMouldId());
-            iE1.setgId(a2.getId());
-            if (isAudit) {
-                iE1.setIsAudit(1);
-            }
-            AppDao.saveQus(iE1);
-        }
-
     }
     private void initCover(boolean isAudit) throws DbException{
         MouldEntity en=null;
@@ -109,18 +113,23 @@ public class LoadActivity extends AbstractBaseActivity {
         CoverEntity cE1 = new CoverEntity();
         cE1.setTitle("标题");
         cE1.setmId(en.getId());
+        //1是创建日期，2是作者，3是地点，4是参与者
         CoverEntity cE2 = new CoverEntity();
         cE2.setTitle("创建日期");
         cE2.setmId(en.getId());
+        cE2.setType(1);
         CoverEntity cE3 = new CoverEntity();
         cE3.setTitle("作者");
         cE3.setmId(en.getId());
+        cE3.setType(2);
         CoverEntity cE4 = new CoverEntity();
         cE4.setTitle("地点");
         cE4.setmId(en.getId());
+        cE4.setType(3);
         CoverEntity cE5 = new CoverEntity();
         cE5.setTitle("参与人员");
         cE5.setmId(en.getId());
+        cE5.setType(4);
         if (isAudit) {
             cE1.setIsAudit(1);
             cE2.setIsAudit(1);

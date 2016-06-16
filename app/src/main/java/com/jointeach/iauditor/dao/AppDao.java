@@ -3,6 +3,7 @@ package com.jointeach.iauditor.dao;
 import com.jointeach.iauditor.common.JKApplication;
 import com.jointeach.iauditor.entity.AuditGroupEntity;
 import com.jointeach.iauditor.entity.AuditItemEntity;
+import com.jointeach.iauditor.entity.CoverEntity;
 import com.jointeach.iauditor.entity.MouldEntity;
 import com.lidroid.xutils.DbUtils;
 import com.lidroid.xutils.db.sqlite.Selector;
@@ -97,5 +98,16 @@ public class AppDao {
             e.printStackTrace();
             LogTools.e(TAG,e.getMessage());
         }
+    }
+    /**根据模版id获取所有的封面条目*/
+    public static  List<CoverEntity> getCovers(int mId){
+        List<CoverEntity> list=null;
+        try {
+            list = AppDao.db.findAll(Selector.from(CoverEntity.class).where("mId","=",String.valueOf(mId)));
+        } catch (DbException e) {
+            e.printStackTrace();
+            LogTools.e(TAG,"getCovers:"+e.getMessage());
+        }
+        return list;
     }
 }

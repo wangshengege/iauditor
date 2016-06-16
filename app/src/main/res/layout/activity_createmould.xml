@@ -17,12 +17,12 @@
         <org.mylibrary.view.PagerSlidingTabStrip
             android:id="@+id/indicator"
             app:pstsDividerColor="@android:color/transparent"
-            app:pstsIndicatorColor="@color/white"
+            app:pstsIndicatorColor="@color/colorAccent"
             app:pstsIndicatorHeight="2dp"
             app:pstsShouldExpand="true"
             app:pstsTabBackground="@drawable/background_tab"
             app:pstsUnderlineHeight="1px"
-            app:selectedTabTextColor="@color/white"
+            app:selectedTabTextColor="@color/colorAccent"
             android:layout_width="match_parent"
             android:layout_height="40dp"
             android:textColor="@color/tabcolor"
@@ -40,5 +40,6 @@
         android:layout_margin="@dimen/fab_margin"
         android:layout_alignParentRight="true"
         android:layout_alignParentBottom="true"
+        app:backgroundTint="@color/colorAccent"
         android:src="@drawable/ic_add_white_48dp" />
 </RelativeLayout>

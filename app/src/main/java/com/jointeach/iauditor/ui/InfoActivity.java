@@ -10,6 +10,9 @@ import android.view.MenuItem;
 import android.view.View;
 
 import com.jointeach.iauditor.R;
+import com.jointeach.iauditor.common.MouldHelper;
+import com.jointeach.iauditor.entity.MouldEntity;
+import com.jointeach.iauditor.entity.SelectAccontBack;
 import com.jointeach.iauditor.entity.UpdataBack;
 import com.jointeach.iauditor.ui.base.BaseMainFragment;
 import com.jointeach.iauditor.ui.fragment.AuditPriviewFragment;
@@ -57,9 +60,10 @@ public class InfoActivity extends AbstractBaseActivity {
         initToolbar(type);
         getSupportFragmentManager().beginTransaction().add(R.id.fl_content,getFragment(type)).commit();
         EventBus.getDefault().register(this,"upData",UpdataBack.class);
+        EventBus.getDefault().register(this,"getAccounts",SelectAccontBack.class);
     }
     public void upData(UpdataBack back){
-        if(back.isAudit && fragment!=null){
+        if(fragment!=null){
         fragment.updata();
         }
     }
@@ -96,14 +100,42 @@ public class InfoActivity extends AbstractBaseActivity {
         @Override
         public boolean onMenuItemClick(MenuItem item) {
             if(item.getItemId()==R.id.action_output){
-                Tools.showToast(self,item.getTitle().toString());
+                MouldHelper mouldHelper=new MouldHelper();
+                mouldHelper.report(mId, new MouldHelper.ReportListener() {
+                    @Override
+                    public void error() {
+                        Tools.showToast(self,"审计出错");
+                    }
+
+                    @Override
+                    public void success(String filePath) {
+                        Tools.showToast(self,"审计报告保存在："+filePath);
+                    }
+                });
+
+            }else if(item.getItemId()==R.id.action_share){
+                SelectAccountActivity.startAction(self,1);
+            }else if(item.getItemId()==R.id.action_delete){
+                finish();
+                Tools.showToast(self,"删除成功");
             }
             return true;
         }
     };
+    private void getAccounts(SelectAccontBack accontBack){
+        if(accontBack.isShare()) {
+            Tools.showToast(self, "分享成功");
+        }
+    }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.info_menu,menu);
         return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        EventBus.getDefault().unregister(this);
     }
 }

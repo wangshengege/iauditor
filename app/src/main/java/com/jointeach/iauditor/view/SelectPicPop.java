@@ -1,30 +1,32 @@
-package com.jointeach.iauditor.common;
+package com.jointeach.iauditor.view;
 
-import android.app.Dialog;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.PopupWindow;
 
 import com.jointeach.iauditor.R;
 
 /**
  * 作者: ws
- * 日期: 2016/6/12.
+ * 日期: 2016/6/15.
  * 介绍：iauditor
  */
-public class SelectPicDialog extends Dialog implements View.OnClickListener{
+public class SelectPicPop  implements View.OnClickListener{
     private Context context;
+    private PopupWindow pop;
     private SelectPicListener selectPicListener;
-    public SelectPicDialog(Context context) {
-        this(context,android.R.style.Theme_DeviceDefault_Light_Dialog_NoActionBar);
-    }
-
-    public SelectPicDialog(Context context, int theme) {
-        super(context, theme);
-        this.context=context;
-        setContentView(R.layout.dialog_select_pic);
-        findViewById(R.id.tv_camera).setOnClickListener(this);
-        findViewById(R.id.tv_gallery).setOnClickListener(this);
+    public SelectPicPop(Context context) {
+        this.context = context;
+        View v= LayoutInflater.from(context).inflate(R.layout.dialog_select_pic,null);
+       v.findViewById(R.id.tv_camera).setOnClickListener(this);
+        v.findViewById(R.id.tv_gallery).setOnClickListener(this);
+        pop=new PopupWindow(context);
+        pop.setContentView(v);
+        pop.setOutsideTouchable(true);
+        pop.setWidth(ViewGroup.LayoutParams.WRAP_CONTENT);
+        pop.setHeight(ViewGroup.LayoutParams.WRAP_CONTENT);
     }
 
     public SelectPicListener getSelectPicListener() {
@@ -48,11 +50,9 @@ public class SelectPicDialog extends Dialog implements View.OnClickListener{
                 selectPicListener.gallery(v);
                 break;
         }
-        dismiss();
+        pop.dismiss();
     }
-
-    public interface SelectPicListener{
-        void camera(View v);
-        void gallery(View v);
+    public PopupWindow getPop() {
+        return pop;
     }
 }

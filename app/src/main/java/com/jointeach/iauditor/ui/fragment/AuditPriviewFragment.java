@@ -31,6 +31,7 @@ import org.mylibrary.base.AbstractBaseActivity;
 import org.mylibrary.base.AbstractBaseFragment;
 import org.mylibrary.utils.Tools;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -105,8 +106,8 @@ public class AuditPriviewFragment extends BaseMainFragment implements View.OnCli
     @Override
     public void onClick(View v) {
         if(v==btn_audit){
-            if(entity.getReport()==null){
-                Tools.showToast(self,"没有报告，请在编辑中保存审计报告！");
+            if(entity.getReport()==null || !new File(entity.getReport()).exists()){
+                Tools.showToast(self,"没有报告，请先导出审计报告！");
             }else {
                 String[] tos = {"1605560675@qq.com"};
                 senMail(tos,entity.getTitle(), entity.getReport());

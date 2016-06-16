@@ -17,8 +17,8 @@
         android:layout_width="60dp"
         android:layout_height="60dp"
         android:src="@drawable/page5"
-        app:civ_border_width="2dp"
-        app:civ_border_color="#FF000000"/>
+        app:civ_border_width="1dp"
+        app:civ_border_color="@color/colorAccent"/>
     <LinearLayout
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -37,7 +37,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="15sp"
-            android:textColor="@color/primary_light"
+            android:textColor="@color/gray_8f8"
             android:layout_marginTop="5dp"
             android:text="标题"/>
     </LinearLayout>
@@ -45,7 +45,7 @@
         android:id="@+id/tv_edit"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textColor="@android:color/holo_blue_bright"
+        android:textColor="@color/colorAccent"
         android:textSize="16sp"
         android:text="编辑"/>
 </LinearLayout>
@@ -57,7 +57,7 @@
         android:textSize="18sp"
         android:text="预览"
         android:visibility="gone"
-        android:background="@color/colorPrimaryDark"/>
+        android:background="@drawable/green_bigbtn_selector"/>
     <ScrollView
         android:layout_width="match_parent"
         android:layout_marginTop="5dp"
@@ -75,5 +75,5 @@
         android:layout_height="45dp"
         android:textColor="@color/white"
         android:textSize="18sp"
-        android:background="@drawable/green_bigbtn_selector"/>
+        android:background="@drawable/bule_bigbtn_selector"/>
 </LinearLayout>

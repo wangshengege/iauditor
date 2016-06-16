@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import com.jointeach.iauditor.R;
 import com.jointeach.iauditor.adapter.MouldAdapter;
 import com.jointeach.iauditor.common.JKApplication;
+import com.jointeach.iauditor.dao.AppDao;
 import com.jointeach.iauditor.entity.MouldEntity;
 import com.jointeach.iauditor.ui.base.BaseMainFragment;
 import com.lidroid.xutils.DbUtils;
@@ -43,14 +44,25 @@ public class AuditFragment extends BaseMainFragment {
     }
 
     private void initData() {
-        mouldItems=new ArrayList<>();
-        DbUtils db = DbUtils.create(JKApplication.getContext());
+        if(mouldItems==null){
+            mouldItems=new ArrayList<>();
+        }else {
+            mouldItems.clear();
+        }
+
         try {
-            List<MouldEntity> items=db.findAll(Selector.from(MouldEntity.class).where("type","=","1"));
+            List<MouldEntity> items= AppDao.db.findAll(Selector.from(MouldEntity.class).where("type","=","1"));
             mouldItems.addAll(items);
         } catch (DbException e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public void updata() {
+        super.updata();
+        initData();
+        mouldAdapter.notifyDataSetChanged();
     }
 
     @Nullable

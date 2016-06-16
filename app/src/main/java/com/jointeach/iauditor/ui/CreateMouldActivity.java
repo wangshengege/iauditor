@@ -108,7 +108,7 @@ public class CreateMouldActivity  extends AbstractBaseActivity{
                 if(outAn!=null && outAn.isRunning()){
                     outAn.end();
                 }
-                if(position!=2 ){
+                if(position==0 ){
                     if(fab.getVisibility()==View.GONE) {
                         fab.setVisibility(View.VISIBLE);
                         if(inAn==null){
@@ -160,14 +160,7 @@ public class CreateMouldActivity  extends AbstractBaseActivity{
 
     @OnClick(R.id.fab)
     private void addItem(View v){
-        switch (index){
-            case 0://字段
-                break;
-            case 1://封面
-                break;
-            case 2://详细说明
-                break;
-        }
+        mouldAdapter.fragments[index].addItem();
     }
     private Toolbar.OnMenuItemClickListener onMenuItemClick=new Toolbar.OnMenuItemClickListener() {
         @Override
@@ -183,13 +176,6 @@ public class CreateMouldActivity  extends AbstractBaseActivity{
             return true;
         }
     };
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater menuInflater = getMenuInflater();
-        menuInflater.inflate(R.menu.preview_menu, menu);
-        return super.onCreateOptionsMenu(menu);
-    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {

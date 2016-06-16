@@ -1,6 +1,7 @@
 package com.jointeach.iauditor.ui.fragment;
 
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,8 +12,11 @@ import android.widget.TextView;
 import com.jointeach.iauditor.R;
 import com.jointeach.iauditor.common.JKApplication;
 import com.jointeach.iauditor.dao.AppDao;
+import com.jointeach.iauditor.entity.CoverEntity;
 import com.jointeach.iauditor.entity.InfoEntity;
 import com.jointeach.iauditor.entity.MouldEntity;
+import com.jointeach.iauditor.entity.SelectAccontBack;
+import com.jointeach.iauditor.ui.SelectAccountActivity;
 import com.jointeach.iauditor.ui.base.BaseAuditFragment;
 import com.lidroid.xutils.DbUtils;
 import com.lidroid.xutils.ViewUtils;
@@ -24,6 +28,10 @@ import org.mylibrary.base.AbstractBaseActivity;
 import org.mylibrary.utils.Tools;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
+import de.greenrobot.event.EventBus;
 
 /**
  * 作者: ws
@@ -52,8 +60,11 @@ public class AuditInfoFragment extends BaseAuditFragment {
         Bundle bundle=getArguments();
         mId=bundle.getInt("mId");
         initData();
+        EventBus.getDefault().register(this,"getAccounts",SelectAccontBack.class);
     }
-
+    private void getAccounts(SelectAccontBack accontBack){
+       eds[eds.length-1].setText(accontBack.getAccount());
+    }
     private void initData() {
         try {
             entity=AppDao.db.findFirst(Selector.from(MouldEntity.class).where("id","=",mId)
@@ -82,9 +93,18 @@ public class AuditInfoFragment extends BaseAuditFragment {
         tvTitle.setText(entity.getTitle());
         LayoutInflater inflater=LayoutInflater.from(self);
         ArrayList<InfoEntity> infos=new ArrayList<>();
+        List<CoverEntity> cEs=AppDao.getCovers(entity.getId());
+        HashMap<Integer,String> typs=null;
+        if(cEs!=null && cEs.size()>3){
+            typs=new HashMap<>();
+            for (CoverEntity c:cEs) {
+                typs.put(c.getType(),c.getTitle());
+            }
+        }
         infos.add(new InfoEntity("标题",entity.getTitle()));
-        infos.add(new InfoEntity("作者",entity.getAuthor()));
-        infos.add(new InfoEntity("位置",entity.getLocation()));
+        infos.add(new InfoEntity(typs==null?"作者":typs.get(2),entity.getAuthor()));
+        infos.add(new InfoEntity(typs==null?"位置":typs.get(3),entity.getLocation()));
+        infos.add(new InfoEntity(typs==null?"参与人员":typs.get(4),entity.getParticipants()));
         if(eds==null){
             eds=new EditText[infos.size()];
         }
@@ -96,6 +116,15 @@ public class AuditInfoFragment extends BaseAuditFragment {
             eds[i]=et;
             tv.setText(in.getTitle());
             et.setText(in.getSubTitle());
+            if(i==infos.size()-1){
+                et.setFocusable(false);
+                et.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        SelectAccountActivity.startAction(self);
+                    }
+                });
+            }
             ll_content.addView(v);
         }
     }
@@ -117,6 +146,13 @@ public class AuditInfoFragment extends BaseAuditFragment {
         entity.setTitle(eds[0].getText().toString());
         entity.setAuthor(eds[1].getText().toString());
         entity.setLocation(eds[2].getText().toString());
+        entity.setParticipants(eds[3].getText().toString());
         AppDao.saveMould(entity);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        EventBus.getDefault().unregister(this);
     }
 }

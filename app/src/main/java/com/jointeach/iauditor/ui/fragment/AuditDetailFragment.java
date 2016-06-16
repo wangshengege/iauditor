@@ -1,6 +1,8 @@
 package com.jointeach.iauditor.ui.fragment;
 
 
+import android.app.Activity;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -70,7 +72,7 @@ public class AuditDetailFragment extends BaseAuditFragment {
                 super.handleMessage(msg);
                 int index= (int) msg.obj;
                 if (msg.what == 1 && index>=groups.size()-1) {
-                    mApapter = new AuditDetailAdapter(groups, items, plv);
+                    mApapter = new AuditDetailAdapter((Activity) self,groups, items, plv);
                     plv.setAdapter(mApapter);
                 }
             }
@@ -193,6 +195,12 @@ public class AuditDetailFragment extends BaseAuditFragment {
             msg.obj=index;
             handler.sendMessage(msg);
         }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        mApapter.onActivityResult(requestCode,resultCode,data);
     }
 }
 

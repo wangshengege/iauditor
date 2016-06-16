@@ -7,4 +7,5 @@ package com.jointeach.iauditor.common;
  */
 public class AppConfig {
     public static final String ISADDMOULD="isAddMould";
+    public static final String ISFIRST="isfirstaccount";
 }

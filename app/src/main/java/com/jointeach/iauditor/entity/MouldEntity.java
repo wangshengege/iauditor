@@ -28,6 +28,15 @@ public class MouldEntity extends DbBaseEntity implements Cloneable{
     private int score;
     private String location="";
     private String report;
+    private String participants="--";
+
+    public String getParticipants() {
+        return participants;
+    }
+
+    public void setParticipants(String participants) {
+        this.participants = participants;
+    }
 
     public String getReport() {
         return report;

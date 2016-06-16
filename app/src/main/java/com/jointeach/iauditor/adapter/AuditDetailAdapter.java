@@ -1,5 +1,6 @@
 package com.jointeach.iauditor.adapter;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,17 +9,31 @@ import android.widget.BaseExpandableListAdapter;
 import android.widget.Button;
 import android.widget.ExpandableListView;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.jointeach.iauditor.R;
-import com.jointeach.iauditor.common.JKApplication;
+import com.jointeach.iauditor.common.ImgLoadUtils;
+import com.jointeach.iauditor.dao.AppDao;
 import com.jointeach.iauditor.entity.AuditGroupEntity;
 import com.jointeach.iauditor.entity.AuditItemEntity;
-import com.lidroid.xutils.DbUtils;
+import com.jointeach.iauditor.entity.AuditQusPicEntity;
+import com.jointeach.iauditor.view.SelectPicListener;
+import com.jointeach.iauditor.view.SelectPicPop;
+import com.lidroid.xutils.db.sqlite.Selector;
 import com.lidroid.xutils.exception.DbException;
 
+import org.mylibrary.common.FileAccessor;
+import org.mylibrary.utils.LogTools;
+import org.mylibrary.utils.PxUtil;
+import org.mylibrary.utils.Tools;
+import org.mylibrary.utils.Utils;
+
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
 
 /**
  * 作者: ws
@@ -30,8 +45,12 @@ public class AuditDetailAdapter extends BaseExpandableListAdapter {
     private HashMap<Integer, ArrayList<AuditItemEntity>> items;
     private HashMap<Integer,Boolean> isOpen;
     private ExpandableListView plv;
-    DbUtils db;
-    public AuditDetailAdapter(ArrayList<AuditGroupEntity> groups, HashMap<Integer, ArrayList<AuditItemEntity>> items,ExpandableListView plv) {
+    private Activity ctx;
+    private AuditItemEntity picItem;
+    private File iconPath;
+    private HashSet<Integer> set;
+    public AuditDetailAdapter(Activity ctx,ArrayList<AuditGroupEntity> groups, HashMap<Integer, ArrayList<AuditItemEntity>> items,ExpandableListView plv) {
+        this.ctx=ctx;
         this.groups = groups;
         this.items = items;
         this.plv=plv;
@@ -39,7 +58,6 @@ public class AuditDetailAdapter extends BaseExpandableListAdapter {
         for (int i = 0; i <groups.size() ; i++) {
             isOpen.put(i,false);
         }
-        db=DbUtils.create(JKApplication.getContext());
     }
 
     @Override
@@ -111,8 +129,8 @@ public class AuditDetailAdapter extends BaseExpandableListAdapter {
     }
 
     @Override
-    public View getChildView(int groupPosition, int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
-        ViewHolder holder;
+    public View getChildView(int groupPosition, final int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
+        final ViewHolder holder;
         if (convertView == null) {
             convertView = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_audit_pos, null);
             holder = new ViewHolder(convertView);
@@ -120,14 +138,54 @@ public class AuditDetailAdapter extends BaseExpandableListAdapter {
         } else {
             holder = (ViewHolder) convertView.getTag();
         }
-        AuditItemEntity entity = (AuditItemEntity) getChild(groupPosition, childPosition);
+        final AuditItemEntity entity = (AuditItemEntity) getChild(groupPosition, childPosition);
         holder.tv_title.setText(entity.getTitle());
         holder.btn_qus_ncan.setTag(entity);
         holder.btn_qus_ncan.setOnClickListener(qus_nocan);
         holder.btn_qus_no.setTag(entity);
-        holder.btn_qus_no.setOnClickListener(qus_no);
+        if(entity.getState()==2){
+            holder.ll_data.setVisibility(View.VISIBLE);
+            initPic(holder,entity);
+        }else {
+            holder.ll_data.setVisibility(View.GONE);
+        }
+        holder.btn_qus_no.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AuditItemEntity entity= (AuditItemEntity) v.getTag();
+                entity.setState(2);
+                v.setSelected(true);
+                upData(entity);
+                holder.ll_data.setVisibility(View.VISIBLE);
+            }
+        });
         holder.btn_qus_yes.setTag(entity);
         holder.btn_qus_yes.setOnClickListener(qus_yes);
+        holder.add.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+               List<AuditQusPicEntity> itms= getPics(entity);
+                if(itms!=null && itms.size()>=4){
+                    Tools.showToast(ctx,"照片不能多于4张");
+                    return;
+                }
+                picItem=entity;
+                SelectPicPop pop=new SelectPicPop(v.getContext());
+                pop.setSelectPicListener(new SelectPicListener() {
+                    @Override
+                    public void camera(View v) {
+                        iconPath = new File(FileAccessor.getImagePathName(), Tools.getTimeStamp() + ".jpg");
+                        Utils.photo(ctx, iconPath, 100);
+                    }
+
+                    @Override
+                    public void gallery(View v) {
+                        Utils.album(ctx, 200);
+                    }
+                });
+                pop.getPop().showAsDropDown(v);
+            }
+        });
        switch (entity.getState()){
            case 1:
                holder.setNoState();
@@ -147,20 +205,36 @@ public class AuditDetailAdapter extends BaseExpandableListAdapter {
        }
         return convertView;
     }
+    //获取图片
+    private List<AuditQusPicEntity> getPics(AuditItemEntity entity){
+        List<AuditQusPicEntity> pics=null;
+        try {
+            pics=AppDao.db.findAll(Selector.from(AuditQusPicEntity.class)
+                    .where("qusId","=",entity.getId()));
+        } catch (DbException e) {
+            e.printStackTrace();
+        }
+        return pics;
+    }
+    private void initPic(ViewHolder holder,AuditItemEntity entity) {
+        List<AuditQusPicEntity> pics=getPics(entity);
+        if(pics!=null && pics.size()>0){
+            holder.ll_gallery.removeAllViews();
+            for (AuditQusPicEntity pic:pics) {
+                ImageView iv=new ImageView(ctx);
+                iv.setLayoutParams(new ViewGroup.LayoutParams(PxUtil.dip2px(ctx,85),PxUtil.dip2px(ctx,80)));
+                iv.setPadding(0,0,PxUtil.dip2px(ctx,2),0);
+                ImgLoadUtils.loadImageRes(pic.getImgPath(),iv);
+                holder.ll_gallery.addView(iv);
+            }
+        }
+    }
+
     private View.OnClickListener qus_yes=new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             AuditItemEntity entity= (AuditItemEntity) v.getTag();
             entity.setState(1);
-            v.setSelected(true);
-            upData(entity);
-        }
-    };
-    private View.OnClickListener qus_no=new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            AuditItemEntity entity= (AuditItemEntity) v.getTag();
-            entity.setState(2);
             v.setSelected(true);
             upData(entity);
         }
@@ -177,7 +251,7 @@ public class AuditDetailAdapter extends BaseExpandableListAdapter {
     //更新数据
     private void upData(AuditItemEntity entity){
         try {
-            db.saveOrUpdate(entity);
+            AppDao.db.saveOrUpdate(entity);
         } catch (DbException e) {
             e.printStackTrace();
         }
@@ -206,17 +280,44 @@ public class AuditDetailAdapter extends BaseExpandableListAdapter {
         Button btn_qus_yes;
         Button btn_qus_no;
         Button btn_qus_ncan;
+        View ll_data;
+        Button add;
+        LinearLayout ll_gallery;
         public ViewHolder(View itemView) {
             this.itemView = itemView;
             tv_title = (TextView) itemView.findViewById(R.id.tv_title);
             btn_qus_yes= (Button) itemView.findViewById(R.id.btn_qus_yes);
             btn_qus_no= (Button) itemView.findViewById(R.id.btn_qus_no);
             btn_qus_ncan= (Button) itemView.findViewById(R.id.btn_qus_ncan);
+            ll_data=itemView.findViewById(R.id.ll_data);
+            add= (Button) itemView.findViewById(R.id.btn_addpic);
+            ll_gallery= (LinearLayout) itemView.findViewById(R.id.ll_gallery);
         }
         public void setNoState(){
             btn_qus_yes.setSelected(false);
             btn_qus_no.setSelected(false);
             btn_qus_ncan.setSelected(false);
+        }
+    }
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if(resultCode==0 || picItem==null){//取消操作
+            return;
+        }
+        String iconP = null;
+        if (requestCode == 100) {//拍照
+            iconP = iconPath.getAbsolutePath();
+        } else if (requestCode == 200) {//相册
+            iconP = Utils.resolvePhotoFromIntent(ctx, data, FileAccessor.getImagePathName().getAbsolutePath());
+        }
+        AuditQusPicEntity pic=new AuditQusPicEntity();
+        pic.setImgPath(iconP);
+        pic.setQusId(picItem.getId());
+        pic.setgId(picItem.getgId());
+        try {
+            AppDao.db.save(pic);
+            notifyDataSetChanged();
+        } catch (DbException e) {
+            e.printStackTrace();
         }
     }
 }

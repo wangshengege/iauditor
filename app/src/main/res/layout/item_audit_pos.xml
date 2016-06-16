@@ -29,4 +29,45 @@
         android:layout_marginTop="10dp"
         android:background="@drawable/qus_nocan_selector"
         android:text="不使用"/>
+    <LinearLayout
+        android:id="@+id/ll_data"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        android:visibility="gone"
+        android:orientation="vertical">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:src="@drawable/ic_add_image"/>
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textColor="@color/black"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:text="图片最多4张"/>
+            <Button
+                android:id="@+id/btn_addpic"
+                android:layout_width="wrap_content"
+                android:layout_height="35dp"
+                android:textColor="@color/white"
+                android:textSize="15sp"
+                android:background="@drawable/bule_bigbtn_selector"
+                android:text="添加媒体"/>
+        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/ll_gallery"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:orientation="horizontal"/>
+    </LinearLayout>
 </LinearLayout>

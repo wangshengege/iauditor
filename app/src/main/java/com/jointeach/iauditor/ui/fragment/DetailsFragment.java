@@ -4,9 +4,6 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,25 +11,24 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.jointeach.iauditor.R;
-import com.jointeach.iauditor.adapter.MouldAdapter;
 import com.jointeach.iauditor.common.ImgLoadUtils;
-import com.jointeach.iauditor.common.SelectPicDialog;
 import com.jointeach.iauditor.dao.AppDao;
 import com.jointeach.iauditor.entity.MouldEntity;
+import com.jointeach.iauditor.entity.UpdataBack;
 import com.jointeach.iauditor.ui.base.BaseAuditFragment;
-import com.jointeach.iauditor.ui.base.BaseMainFragment;
+import com.jointeach.iauditor.view.SelectPicListener;
+import com.jointeach.iauditor.view.SelectPicPop;
 import com.lidroid.xutils.ViewUtils;
 import com.lidroid.xutils.view.annotation.ViewInject;
 
-import org.mylibrary.base.AbstractBaseFragment;
 import org.mylibrary.common.FileAccessor;
 import org.mylibrary.utils.LogTools;
 import org.mylibrary.utils.Tools;
 import org.mylibrary.utils.Utils;
 
 import java.io.File;
-import java.util.ArrayList;
 
+import de.greenrobot.event.EventBus;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 /**
@@ -96,8 +92,8 @@ public class DetailsFragment extends BaseAuditFragment implements View.OnClickLi
 
     @Override
     public void onClick(View v) {
-        SelectPicDialog dialog = new SelectPicDialog(self);
-        dialog.setSelectPicListener(new SelectPicDialog.SelectPicListener() {
+        SelectPicPop pop=new SelectPicPop(self);
+        pop.setSelectPicListener(new SelectPicListener() {
             @Override
             public void camera(View v) {
                 iconPath = new File(FileAccessor.getImagePathName(), Tools.getTimeStamp() + ".jpg");
@@ -109,7 +105,7 @@ public class DetailsFragment extends BaseAuditFragment implements View.OnClickLi
                 Utils.album((Activity) self, 200);
             }
         });
-        dialog.show();
+        pop.getPop().showAsDropDown(v);
     }
 
     @Override
@@ -119,12 +115,16 @@ public class DetailsFragment extends BaseAuditFragment implements View.OnClickLi
             mould.setTitle(et_title.getText().toString());
             mould.setDescribe(et_subtitle.getText().toString());
             AppDao.saveMould(mould);
+            EventBus.getDefault().post(new UpdataBack());
         }
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        if(resultCode==0){//取消操作
+            return;
+        }
         String iconP = mould.getIcPath();
         if (requestCode == 100) {//拍照
             iconP = iconPath.getAbsolutePath();

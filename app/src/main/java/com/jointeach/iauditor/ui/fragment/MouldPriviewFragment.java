@@ -1,5 +1,6 @@
 package com.jointeach.iauditor.ui.fragment;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -19,10 +20,12 @@ import com.jointeach.iauditor.common.JKApplication;
 import com.jointeach.iauditor.dao.AppDao;
 import com.jointeach.iauditor.entity.AuditGroupEntity;
 import com.jointeach.iauditor.entity.AuditItemEntity;
+import com.jointeach.iauditor.entity.CoverEntity;
 import com.jointeach.iauditor.entity.InfoEntity;
 import com.jointeach.iauditor.entity.MouldEntity;
 import com.jointeach.iauditor.entity.UpdataBack;
 import com.jointeach.iauditor.ui.CreateMouldActivity;
+import com.jointeach.iauditor.ui.EditAuditActivity;
 import com.jointeach.iauditor.ui.base.BaseMainFragment;
 import com.lidroid.xutils.DbUtils;
 import com.lidroid.xutils.ViewUtils;
@@ -78,9 +81,20 @@ public class MouldPriviewFragment extends BaseMainFragment {
         super.onCreate(savedInstanceState);
         Bundle bundle=getArguments();
         mId=bundle.getInt("mId");
-        DbUtils db = DbUtils.create(self);
+        getData();
+
+    }
+
+    @Override
+    public void updata() {
+        super.updata();
+        getData();
+        initView();
+    }
+
+    private void getData(){
         try {
-            entity=db.findFirst(Selector.from(MouldEntity.class).where("id","=",String.valueOf(mId)));
+            entity=AppDao.db.findFirst(Selector.from(MouldEntity.class).where("id","=",String.valueOf(mId)));
         } catch (DbException e) {
             e.printStackTrace();
             Tools.showToast(self,"数据出错");
@@ -91,7 +105,6 @@ public class MouldPriviewFragment extends BaseMainFragment {
             ((AbstractBaseActivity)self).finish();
         }
     }
-
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -110,12 +123,17 @@ public class MouldPriviewFragment extends BaseMainFragment {
         tv_subtitle.setText(entity.getDescribe());
 
         ImgLoadUtils.loadImageRes(entity.getIcPath(),iv_acator);
-        infoItems=new ArrayList<>();
+        if(infoItems==null) {
+            infoItems = new ArrayList<>();
+        }else{
+            infoItems.clear();
+        }
         infoItems.add(new InfoEntity("行业",entity.getIndustry()));
         infoItems.add(new InfoEntity("子行业",entity.getcIndustry()));
         infoItems.add(new InfoEntity("时间",Tools.getCurrentDateStr(entity.getCreateTime(),"yyyy/MM/dd")));
         infoItems.add(new InfoEntity("拥有者",entity.getAuthor()));
         LayoutInflater inflater=LayoutInflater.from(self);
+        ll_content.removeAllViews();
         for (InfoEntity info:infoItems) {
             View v=inflater.inflate(R.layout.info_item,null);
             TextView tv_title= (TextView) v.findViewById(R.id.tv_title);
@@ -128,12 +146,11 @@ public class MouldPriviewFragment extends BaseMainFragment {
     @OnClick(R.id.btn_audit)
     private void toAudit(View v){
           mould2audit(entity);
-        //AppDao.saveMould(mouldEntity);
-       // EventBus.getDefault().post(new UpdataBack());
+        EventBus.getDefault().post(new UpdataBack(true));
     }
     /**将模版转成审计*/
     private  void mould2audit(final MouldEntity mould){
-        MouldEntity mouldEntity= (MouldEntity) mould.clone();
+        final MouldEntity mouldEntity= (MouldEntity) mould.clone();
         mouldEntity.setState(1);
         mouldEntity.setType(1);
         try {
@@ -145,8 +162,12 @@ public class MouldPriviewFragment extends BaseMainFragment {
             @Override
             public void handleMessage(Message msg) {
                 super.handleMessage(msg);
-                Tools.showToast(self,"完成");
-                EventBus.getDefault().post(new UpdataBack(true));
+                if(msg.what==1) {
+                    MouldEntity mould= (MouldEntity) msg.obj;
+                    EventBus.getDefault().post(new UpdataBack(true));
+                    EditAuditActivity.startAction(self, mould.getId());
+                    ((Activity) self).finish();
+                }
             }
         };
         new Thread(){
@@ -158,7 +179,16 @@ public class MouldPriviewFragment extends BaseMainFragment {
                     return;
                 }
                 MouldEntity mo = moulds.get(moulds.size() - 1);//新增加的数据
-
+                List<CoverEntity> cEs=AppDao.getCovers(mould.getId());
+                try {
+                for (CoverEntity c:cEs) {
+                    CoverEntity ce= (CoverEntity) c.clone();
+                    ce.setmId(mo.getId());
+                    AppDao.db.save(ce);
+                }
+                } catch (DbException e) {
+                    e.printStackTrace();
+                }
                 List<AuditGroupEntity> groups=AppDao.getGroups(mould.getId());//查找当前群组
                 for (AuditGroupEntity en:groups) {
                     AuditGroupEntity nen= (AuditGroupEntity) en.clone();
@@ -177,7 +207,10 @@ public class MouldPriviewFragment extends BaseMainFragment {
                         AppDao.saveQus(i);
                     }
                 }
-                handler.sendEmptyMessage(1);
+                Message msg=new Message();
+                msg.what=1;
+                msg.obj=mo;
+                handler.sendMessage(msg);
             }
         }.start();
     }
