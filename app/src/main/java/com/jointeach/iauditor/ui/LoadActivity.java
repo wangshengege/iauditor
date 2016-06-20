@@ -1,20 +1,16 @@
 package com.jointeach.iauditor.ui;
 
-import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.os.Looper;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
-import com.jointeach.iauditor.MainActivity;
 import com.jointeach.iauditor.R;
 import com.jointeach.iauditor.common.AppConfig;
 import com.jointeach.iauditor.common.ImgLoadUtils;
-import com.jointeach.iauditor.common.JKApplication;
 import com.jointeach.iauditor.dao.AppDao;
 import com.jointeach.iauditor.entity.AuditGroupEntity;
 import com.jointeach.iauditor.entity.AuditItemEntity;
-import com.jointeach.iauditor.entity.ColumnEntity;
 import com.jointeach.iauditor.entity.CoverEntity;
 import com.jointeach.iauditor.entity.MouldEntity;
 import com.lidroid.xutils.DbUtils;
@@ -23,7 +19,6 @@ import com.lidroid.xutils.exception.DbException;
 
 import org.mylibrary.base.AbstractBaseActivity;
 import org.mylibrary.common.CommonFunction;
-import org.mylibrary.utils.LogTools;
 import org.mylibrary.utils.Tools;
 
 import java.util.List;
@@ -79,7 +74,6 @@ public class LoadActivity extends AbstractBaseActivity {
             ,"14.4-车灯是否良好？","14.5-司机坐椅是否良好？","14.6-乘客坐椅是否良好？","14.7-急救用品是否充足？"
             ,"14.8-存款规定?"}
     };
-    ProgressDialog   pd;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -88,19 +82,11 @@ public class LoadActivity extends AbstractBaseActivity {
         iv.setScaleType(ImageView.ScaleType.FIT_XY);
         ImgLoadUtils.getImageLoader().displayImage("drawable://"+ R.drawable.load,iv);
         setContentView(iv);
-        pd=new ProgressDialog(self);
-        pd.setIndeterminate(true);
-        pd.setCanceledOnTouchOutside(false);
-        pd.setMessage("加载中。。。");
-        pd.show();
             new Thread() {
                 @Override
                 public void run() {
                     super.run();
-
                     if(!CommonFunction.getBoolean(AppConfig.ISADDMOULD, false)){
-                        Looper.prepare();
-
                     try {
                         initData(AppDao.db,false,2);//模拟一个模版
                         initQus(false);
@@ -116,10 +102,6 @@ public class LoadActivity extends AbstractBaseActivity {
                         e.printStackTrace();
                     }
 */
-                        if(pd!=null){
-                            pd.dismiss();
-                                }
-                    CommonFunction.putBoolean(AppConfig.ISADDMOULD, true);
                         try {
                             sleep(500);
                         } catch (InterruptedException e) {
