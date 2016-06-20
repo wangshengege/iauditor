@@ -8,6 +8,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.jointeach.iauditor.R;
+import com.jointeach.iauditor.common.JKApplication;
 import com.jointeach.iauditor.dao.AppDao;
 import com.jointeach.iauditor.entity.AuditGroupEntity;
 import com.jointeach.iauditor.entity.AuditItemEntity;
@@ -20,6 +21,7 @@ import com.lidroid.xutils.exception.DbException;
 import com.lidroid.xutils.view.annotation.ViewInject;
 
 import org.mylibrary.biz.DbBaseEntity;
+import org.mylibrary.utils.Tools;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -27,7 +29,7 @@ import java.util.HashSet;
 /**
  * 作者: ws
  * 日期: 2016/5/27.
- * 介绍：
+ * 介绍：模版字段适配器
  */
 public class ColumnAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private ArrayList<QusBaseEntity> items;
@@ -52,11 +54,14 @@ public class ColumnAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder,final int position) {
-        if (holder instanceof ChapterViewHolder) {
-            ChapterViewHolder chapterViewHolder = (ChapterViewHolder) holder;
-        } else {
-            final QusBaseEntity entity= (QusBaseEntity) items.get(position - 1);
+        if (holder instanceof ColumnViewHolder) {
+            final QusBaseEntity entity=  items.get(position - 1);
             final ColumnViewHolder cHolder = (ColumnViewHolder) holder;
+            if(entity instanceof AuditItemEntity){
+                cHolder.dot.setVisibility(View.VISIBLE);
+            }else{
+                cHolder.dot.setVisibility(View.GONE);
+            }
             cHolder.tv_title.setText(entity.getTitle());
             if (entity instanceof  AuditGroupEntity) {
                 cHolder.iv_type.setImageResource(R.drawable.icon_editor_category);
@@ -74,18 +79,7 @@ public class ColumnAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
             cHolder.view.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if(set==null){
-                        set=new HashSet<Integer>();
-                    }
-                    if (cHolder.style == ColumnViewHolder.ColumnStyle.BLUE) {
-                        cHolder.setColumnStyle(ColumnViewHolder.ColumnStyle.WHITE);
-                        if(set.contains(position)){
-                            set.remove(position);
-                        }
-                    } else {
-                        cHolder.setColumnStyle(ColumnViewHolder.ColumnStyle.BLUE);
-                        set.add(position);
-                    }
+                    dealGroup(cHolder,position);
                 }
             });
             cHolder.iv_delete.setOnClickListener(new View.OnClickListener() {
@@ -96,13 +90,30 @@ public class ColumnAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
             });
         }
     }
+    //处理问题点击
+    private void dealGroup(ColumnViewHolder cHolder,int position){
+        if(set==null){
+            set=new HashSet<>();
+        }
+        if (cHolder.style == ColumnViewHolder.ColumnStyle.BLUE) {
+            cHolder.setColumnStyle(ColumnViewHolder.ColumnStyle.WHITE);
+            if(set.contains(position)){
+                set.remove(position);
+            }
+        } else {
+            cHolder.setColumnStyle(ColumnViewHolder.ColumnStyle.BLUE);
+            set.add(position);
+        }
+    }
     //处理信息
     private void dealInfo(ColumnViewHolder cHolder, QusBaseEntity entity,int position){
         if(cHolder.style== ColumnViewHolder.ColumnStyle.BLUE){//确定
             try {
                 chageInfo(cHolder,entity);
+                dealGroup(cHolder,position);//恢复主题
             } catch (DbException e) {
                 e.printStackTrace();
+                Tools.showToast(JKApplication.getContext(),"处理错误");
             }
         }else{//删除
             try {

@@ -148,6 +148,7 @@ public class AuditDetailAdapter extends BaseExpandableListAdapter {
             initPic(holder,entity);
         }else {
             holder.ll_data.setVisibility(View.GONE);
+            initPic(holder,null);
         }
         holder.btn_qus_no.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -210,24 +211,27 @@ public class AuditDetailAdapter extends BaseExpandableListAdapter {
         List<AuditQusPicEntity> pics=null;
         try {
             pics=AppDao.db.findAll(Selector.from(AuditQusPicEntity.class)
-                    .where("qusId","=",entity.getId()));
+                    .where("qusId","=",entity.getId())
+            .and("gId","=",entity.getgId()));
         } catch (DbException e) {
             e.printStackTrace();
         }
         return pics;
     }
     private void initPic(ViewHolder holder,AuditItemEntity entity) {
+        holder.ll_gallery.removeAllViews();
+        if(entity!=null){
         List<AuditQusPicEntity> pics=getPics(entity);
         if(pics!=null && pics.size()>0){
-            holder.ll_gallery.removeAllViews();
             for (AuditQusPicEntity pic:pics) {
                 ImageView iv=new ImageView(ctx);
                 iv.setLayoutParams(new ViewGroup.LayoutParams(PxUtil.dip2px(ctx,85),PxUtil.dip2px(ctx,80)));
-                iv.setPadding(0,0,PxUtil.dip2px(ctx,2),0);
+                iv.setScaleType(ImageView.ScaleType.CENTER_CROP);
+                iv.setPadding(PxUtil.dip2px(ctx,2.5f),0,PxUtil.dip2px(ctx,2.5f),0);
                 ImgLoadUtils.loadImageRes(pic.getImgPath(),iv);
                 holder.ll_gallery.addView(iv);
             }
-        }
+        }}
     }
 
     private View.OnClickListener qus_yes=new View.OnClickListener() {

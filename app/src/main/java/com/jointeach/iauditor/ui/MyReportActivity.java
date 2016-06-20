@@ -72,7 +72,7 @@ public class MyReportActivity extends AbstractBaseActivity {
 
     private void initView() {
         recycler.setLayoutManager(new LinearLayoutManager(self));
-        recycler.setAdapter(new MouldAdapter(moulds,self));
+        recycler.setAdapter(new MouldAdapter(moulds,1,self));
     }
 
     private void initData() {

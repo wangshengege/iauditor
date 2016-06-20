@@ -1,8 +1,6 @@
 <resources>
-    <string name="app_name">Mauditor</string>
+    <string name="app_name">安全审计</string>
 
-    <string name="navigation_drawer_open">Open navigation drawer</string>
-    <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="creat_mould">创建模版</string>
     <string name="edit_mould">编辑模版</string>
     <string name="paramError">参数出错</string>

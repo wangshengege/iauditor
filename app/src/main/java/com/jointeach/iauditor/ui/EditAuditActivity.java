@@ -205,7 +205,7 @@ public class EditAuditActivity extends AbstractBaseActivity implements View.OnCl
                 }
             }
         }
-        EventBus.getDefault().post(new UpdataBack());
+        EventBus.getDefault().post(new UpdataBack(true));
     }
 
     @Override

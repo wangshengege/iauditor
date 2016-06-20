@@ -1,6 +1,7 @@
 package com.jointeach.iauditor.ui.fragment;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -131,7 +132,7 @@ public class MouldPriviewFragment extends BaseMainFragment {
         infoItems.add(new InfoEntity("行业",entity.getIndustry()));
         infoItems.add(new InfoEntity("子行业",entity.getcIndustry()));
         infoItems.add(new InfoEntity("时间",Tools.getCurrentDateStr(entity.getCreateTime(),"yyyy/MM/dd")));
-        infoItems.add(new InfoEntity("拥有者",entity.getAuthor()));
+        infoItems.add(new InfoEntity("用户",entity.getAuthor()));
         LayoutInflater inflater=LayoutInflater.from(self);
         ll_content.removeAllViews();
         for (InfoEntity info:infoItems) {
@@ -148,6 +149,7 @@ public class MouldPriviewFragment extends BaseMainFragment {
           mould2audit(entity);
         EventBus.getDefault().post(new UpdataBack(true));
     }
+    ProgressDialog pd;
     /**将模版转成审计*/
     private  void mould2audit(final MouldEntity mould){
         final MouldEntity mouldEntity= (MouldEntity) mould.clone();
@@ -170,6 +172,11 @@ public class MouldPriviewFragment extends BaseMainFragment {
                 }
             }
         };
+        pd=new ProgressDialog(self);
+        pd.setIndeterminate(true);
+        pd.setCanceledOnTouchOutside(false);
+        pd.setMessage("加载中。。。");
+        pd.show();
         new Thread(){
             @Override
             public void run() {
@@ -206,6 +213,9 @@ public class MouldPriviewFragment extends BaseMainFragment {
                         i.setmId(e.getMouldId());
                         AppDao.saveQus(i);
                     }
+                }
+                if(pd!=null){
+                    pd.dismiss();
                 }
                 Message msg=new Message();
                 msg.what=1;

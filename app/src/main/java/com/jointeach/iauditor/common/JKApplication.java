@@ -32,7 +32,8 @@ public class JKApplication extends MyApplication {
     public void onCreate() {
         super.onCreate();
         ctx=getApplicationContext();
-        CrashHandler.getInstance().init(ctx, MainActivity.class);
+        //CrashHandler.getInstance().init(ctx, MainActivity.class);
+        CrashHandler.getInstance().init(ctx);
         File cacheDir = StorageUtils.getOwnCacheDirectory(getApplicationContext(), "safecoo/Cache");
         // This configuration tuning is custom. You can tune every option, you
         // may tune some of them,

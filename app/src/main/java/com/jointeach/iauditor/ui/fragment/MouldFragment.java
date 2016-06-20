@@ -57,8 +57,12 @@ public class MouldFragment extends BaseMainFragment {
     private void getData() {
         try {
             List<MouldEntity> items = db.findAll(Selector.from(MouldEntity.class).where("type", "=", "0"));
-            mouldItems.clear();
-            mouldItems.addAll(items);
+            if(items!=null && items.size()>0) {
+                mouldItems.clear();
+                mouldItems.addAll(items);
+            }else{
+                Tools.showToast(self,"没有模版");
+            }
         } catch (DbException e) {
             e.printStackTrace();
         }

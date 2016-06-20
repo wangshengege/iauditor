@@ -2,15 +2,15 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="150dp"
     android:layout_height="match_parent"
-    android:background="@color/white"
     android:orientation="vertical">
     <TextView
         android:id="@+id/tv_camera"
         android:layout_width="150dp"
-        android:layout_height="40dp"
+        android:layout_height="45dp"
         android:gravity="center"
         android:textSize="20sp"
-        android:background="@color/tabcolor"
+        android:textColor="@color/colorPrimary"
+        android:background="@color/bg"
         android:text="拍照"/>
     <View
         android:layout_height="1dp"
@@ -19,9 +19,10 @@
     <TextView
         android:id="@+id/tv_gallery"
         android:layout_width="150dp"
-        android:layout_height="40dp"
+        android:layout_height="45dp"
         android:gravity="center"
         android:textSize="20sp"
-        android:background="@color/tabcolor"
+        android:background="@color/bg"
+        android:textColor="@color/colorPrimary"
         android:text="相册"/>
 </LinearLayout>

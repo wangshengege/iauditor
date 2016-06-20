@@ -13,6 +13,8 @@ import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
 import org.mylibrary.utils.LogTools;
 import org.mylibrary.utils.Tools;
 
+import de.hdodenhof.circleimageview.CircleImageView;
+
 
 /**
  * 作者: ws
@@ -70,13 +72,36 @@ public class ImgLoadUtils {
      *                  String imageUri = "assets://image.png"; // assets
      *                  String imageUri = "drawable://" + R.drawable.image;
      * @param imageView 图片控件
+     */
+    public static void loadImageRes(String url, CircleImageView imageView) {
+        DisplayImageOptions options= new DisplayImageOptions.Builder()
+                .imageScaleType(ImageScaleType.NONE)
+                .showStubImage(R.drawable.page5)          // 设置图片下载期间显示的图片
+                .showImageForEmptyUri(R.drawable.ic_launcher)  // 设置图片Uri为空或是错误的时候显示的图片
+                .showImageOnFail(R.drawable.ic_launcher)       // 设置图片加载或解码过程中发生错误显示的图片
+                .cacheInMemory(true)                        // 设置下载的图片是否缓存在内存中
+                .cacheOnDisc(true)                          // 设置下载的图片是否缓存在SD卡中
+                .bitmapConfig(Bitmap.Config.RGB_565)
+                .build();
+        loadImageRes(url, imageView, options, null);
+    }
+
+    /**
+     * 加载图片
+     *
+     * @param url       String imageUri = "http://site.com/image.png"; // 网络图片
+     *                  String imageUri = "file:///mnt/sdcard/image.png"; //SD卡图片
+     *                  String imageUri = "content://media/external/audio/albumart/13"; // 媒体文件夹
+     *                  String imageUri = "assets://image.png"; // assets
+     *                  String imageUri = "drawable://" + R.drawable.image;
+     * @param imageView 图片控件
      * @param options 显示设置
      * @param listener 加载监听
      */
     public static void loadImageRes(String url, ImageView imageView, DisplayImageOptions options, ImageLoadingListener listener) {
         LogTools.i(TAG, "loadImageRes:" + url);
         if(Tools.isEmpty(url)){
-            url="drawable://"+ R.drawable.page5;
+            url="drawable://"+ R.drawable.ic_launcher;
         }
         if(url.startsWith("www")){
             url="http://"+url;
@@ -97,8 +122,8 @@ public class ImgLoadUtils {
         DisplayImageOptions options= new DisplayImageOptions.Builder()
                 .imageScaleType(ImageScaleType.NONE)
                 .showStubImage(R.drawable.page5)          // 设置图片下载期间显示的图片
-                .showImageForEmptyUri(R.drawable.page5)  // 设置图片Uri为空或是错误的时候显示的图片
-                .showImageOnFail(R.drawable.page5)       // 设置图片加载或解码过程中发生错误显示的图片
+                .showImageForEmptyUri(R.drawable.ic_launcher)  // 设置图片Uri为空或是错误的时候显示的图片
+                .showImageOnFail(R.drawable.ic_launcher)       // 设置图片加载或解码过程中发生错误显示的图片
                 .cacheInMemory(true)                        // 设置下载的图片是否缓存在内存中
                 .cacheOnDisc(true)                          // 设置下载的图片是否缓存在SD卡中
                 .displayer(new RoundedBitmapDisplayer(round))  // 设置成圆角图片

@@ -32,12 +32,18 @@
         <activity android:name=".MainActivity" />
         <activity android:name=".ui.CreateMouldActivity" />
         <activity android:name=".ui.SelectMouldActivity" />
-        <activity android:name=".ui.InfoActivity" />
+        <activity android:name=".ui.InfoActivity"
+            android:theme="@style/Theme.AppCompat.NoActionBar"/>
         <activity
             android:name=".ui.EditAuditActivity"
             android:windowSoftInputMode="adjustPan" />
         <activity android:name=".ui.LoginActivity" />
         <activity android:name=".ui.MyReportActivity" />
+        <activity android:name=".ui.PriviewActivity" />
+        <activity android:name=".ui.SelectAccountActivity"></activity>
+
+
+
 
         <meta-data
             android:name="design_width"
@@ -45,9 +51,6 @@
         <meta-data
             android:name="design_height"
             android:value="1920" />
-
-        <activity android:name=".ui.PriviewActivity" />
-        <activity android:name=".ui.SelectAccountActivity"></activity>
     </application>
 
 </manifest>

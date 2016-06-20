@@ -54,8 +54,8 @@ public class MouldAdapter  extends RecyclerView.Adapter<MouldAdapter.ViewHolder>
     public void onBindViewHolder(ViewHolder holder, int position) {
         MouldEntity entity=mouldItems.get(position);
 
-        holder.tv_describe.setText(entity.getDescribe());
-        holder.tv_revise.setText(Tools.getFormatTime(entity.getLastRevise(), "yyyy/MM/d"));
+        holder.tv_describe.setText(Tools.isEmpty(entity.getDescribe())?"暂无描述":entity.getDescribe());
+        holder.tv_revise.setText(Tools.getFormatTime(entity.getLastRevise(), "yyyy/MM/dd"));
         holder.tv_title.setText(entity.getTitle());
         ImgLoadUtils.loadImageRes(entity.getIcPath(),holder.iv_icon);
         if(type==0){//模版不显示状态

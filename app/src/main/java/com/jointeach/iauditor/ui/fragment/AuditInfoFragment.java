@@ -121,7 +121,7 @@ public class AuditInfoFragment extends BaseAuditFragment {
                 et.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        SelectAccountActivity.startAction(self);
+                        SelectAccountActivity.startAction(self,0);
                     }
                 });
             }

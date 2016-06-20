@@ -52,7 +52,11 @@ public class AuditFragment extends BaseMainFragment {
 
         try {
             List<MouldEntity> items= AppDao.db.findAll(Selector.from(MouldEntity.class).where("type","=","1"));
-            mouldItems.addAll(items);
+            if(items!=null && items.size()>0){
+                mouldItems.addAll(items);
+            }else{
+                Tools.showToast(self,"没有审计");
+            }
         } catch (DbException e) {
             e.printStackTrace();
         }

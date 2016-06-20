@@ -10,7 +10,7 @@ import org.mylibrary.biz.DbBaseEntity;
  */
 public class MouldEntity extends DbBaseEntity implements Cloneable{
     //模版图标
-    private String icPath;
+    private String icPath="";
     //标题
     private String title="";
     //描述
@@ -21,14 +21,14 @@ public class MouldEntity extends DbBaseEntity implements Cloneable{
     private int state;
     //0为模版1为审计
     private int type=0;
-    private String industry="";
-    private String cIndustry="";
+    private String industry="-";
+    private String cIndustry="-";
     private long createTime;
-    private String author="";
+    private String author="-";
     private int score;
     private String location="";
     private String report;
-    private String participants="--";
+    private String participants="-";
 
     public String getParticipants() {
         return participants;

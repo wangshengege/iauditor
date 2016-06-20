@@ -1,5 +1,6 @@
 package com.jointeach.iauditor.view;
 
+import android.app.Activity;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,7 +25,9 @@ public class SelectPicPop  implements View.OnClickListener{
         v.findViewById(R.id.tv_gallery).setOnClickListener(this);
         pop=new PopupWindow(context);
         pop.setContentView(v);
+        pop.setFocusable(true);
         pop.setOutsideTouchable(true);
+        pop.setBackgroundDrawable(context.getResources().getDrawable(R.drawable.abc_popup_background_mtrl_mult));
         pop.setWidth(ViewGroup.LayoutParams.WRAP_CONTENT);
         pop.setHeight(ViewGroup.LayoutParams.WRAP_CONTENT);
     }

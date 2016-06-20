@@ -79,6 +79,7 @@ public class CreateMouldActivity  extends AbstractBaseActivity{
     }
 
     private void initView() {
+        fab.setVisibility(View.GONE);
         toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_18dp);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
@@ -108,7 +109,7 @@ public class CreateMouldActivity  extends AbstractBaseActivity{
                 if(outAn!=null && outAn.isRunning()){
                     outAn.end();
                 }
-                if(position==0 ){
+                if(position<0 ){//把增加按钮取消掉
                     if(fab.getVisibility()==View.GONE) {
                         fab.setVisibility(View.VISIBLE);
                         if(inAn==null){
@@ -146,8 +147,9 @@ public class CreateMouldActivity  extends AbstractBaseActivity{
                             });
                         }
                     }
-                    outAn .start();
-
+                    if(outAn!=null) {
+                        outAn.start();
+                    }
                 }
             }
 

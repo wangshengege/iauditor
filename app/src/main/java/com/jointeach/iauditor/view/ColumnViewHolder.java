@@ -30,6 +30,8 @@ public class ColumnViewHolder extends RecyclerView.ViewHolder {
     public View ll_content;
     @ViewInject(R.id.et_info)
     public EditText et_info;
+    @ViewInject(R.id.view_dot)
+    public View dot;
     public ColumnViewHolder(View itemView) {
         super(itemView);
         view=itemView;
