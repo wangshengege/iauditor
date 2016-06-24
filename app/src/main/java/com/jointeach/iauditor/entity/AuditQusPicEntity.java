@@ -11,6 +11,15 @@ public class AuditQusPicEntity extends DbBaseEntity {
     private String imgPath;
     private int qusId;
     private int gId;
+    private int mId;
+
+    public int getmId() {
+        return mId;
+    }
+
+    public void setmId(int mId) {
+        this.mId = mId;
+    }
 
     public String getImgPath() {
         return imgPath;

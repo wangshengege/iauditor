@@ -14,14 +14,29 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="title"/>
+        <LinearLayout
+            android:layout_marginTop="5dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
         <EditText
             android:id="@+id/et_title"
-            android:layout_width="match_parent"
-            android:layout_marginTop="5dp"
-            android:layout_height="40dp"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:minHeight="40dp"
             android:paddingLeft="10dp"
             android:paddingRight="10dp"
             android:background="@drawable/light_blue_shape"/>
+            <ImageView
+                android:id="@+id/iv_location"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_marginLeft="10dp"
+                android:visibility="invisible"
+                android:src="@drawable/icon_editor_address"/>
+        </LinearLayout>
     </LinearLayout>
     <View
         style="@style/horizontalLine"/>

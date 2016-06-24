@@ -28,7 +28,11 @@ public class InfoEntity extends BaseEntity {
         this.subTitle = subTitle;
     }
 
-
+    public InfoEntity(String title, String subTitle,int type) {
+        this.title = title;
+        this.subTitle = subTitle;
+        this.type=type;
+    }
     public String getTitle() {
         return title;
     }

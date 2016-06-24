@@ -47,7 +47,8 @@ public class AppDao {
         List<AuditGroupEntity> gItms=null;
         try {
             gItms = db.findAll(Selector.from(AuditGroupEntity.class)
-                    .where("mouldId","=",mouldId));
+                    .where("mouldId","=",mouldId)
+            .orderBy("id"));
             return gItms;
         } catch (DbException e) {
             e.printStackTrace();
@@ -61,7 +62,8 @@ public class AppDao {
         try {
             items = db.findAll(Selector.from(AuditItemEntity.class)
                     .where("gId","=",gId)
-                    .and("mId","=",mId));
+                    .and("mId","=",mId)
+            .orderBy("id"));
             return items;
         } catch (DbException e) {
             e.printStackTrace();
@@ -74,7 +76,8 @@ public class AppDao {
         List<MouldEntity> moulds=null;
         try {
             moulds=db.findAll(Selector.from(MouldEntity.class)
-            .where("type","=",isAudit?1:0));
+            .where("type","=",isAudit?1:0)
+            .orderBy("id"));
         } catch (DbException e) {
             e.printStackTrace();
             LogTools.e(TAG,e.getMessage());
@@ -103,7 +106,9 @@ public class AppDao {
     public static  List<CoverEntity> getCovers(int mId){
         List<CoverEntity> list=null;
         try {
-            list = AppDao.db.findAll(Selector.from(CoverEntity.class).where("mId","=",String.valueOf(mId)));
+            list = AppDao.db.findAll(Selector.from(CoverEntity.class)
+                    .where("mId","=",String.valueOf(mId))
+                    .orderBy("id"));
         } catch (DbException e) {
             e.printStackTrace();
             LogTools.e(TAG,"getCovers:"+e.getMessage());

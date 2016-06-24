@@ -1,7 +1,9 @@
 package com.jointeach.iauditor.adapter;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Color;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,6 +14,7 @@ import android.widget.TextView;
 import com.jointeach.iauditor.R;
 import com.jointeach.iauditor.common.ImgLoadUtils;
 import com.jointeach.iauditor.common.JKApplication;
+import com.jointeach.iauditor.common.MouldHelper;
 import com.jointeach.iauditor.entity.MouldEntity;
 import com.jointeach.iauditor.ui.InfoActivity;
 import com.lidroid.xutils.ViewUtils;
@@ -28,69 +31,104 @@ import de.hdodenhof.circleimageview.CircleImageView;
  * 日期: 2016/5/25.
  * 介绍：模型的适配器
  */
-public class MouldAdapter  extends RecyclerView.Adapter<MouldAdapter.ViewHolder> implements View.OnClickListener{
+public class MouldAdapter extends RecyclerView.Adapter<MouldAdapter.ViewHolder> implements View.OnClickListener, View.OnLongClickListener {
     private ArrayList<MouldEntity> mouldItems;
     //0是模版1是审计
-    private int type ;
+    private int type;
     private Context ctx;
-    public MouldAdapter(ArrayList<MouldEntity> mouldItems,Context ctx) {
-        this(mouldItems,0,ctx);
+
+    public MouldAdapter(ArrayList<MouldEntity> mouldItems, Context ctx) {
+        this(mouldItems, 0, ctx);
     }
+
     /**
      * @param mouldItems 数据源
-     * @param type 0是模版1是审计
-     * */
-    public MouldAdapter(ArrayList<MouldEntity> mouldItems,int type,Context ctx) {
+     * @param type       0是模版1是审计
+     */
+    public MouldAdapter(ArrayList<MouldEntity> mouldItems, int type, Context ctx) {
         this.mouldItems = mouldItems;
-        this.type=type;
-        this.ctx=ctx;
+        this.type = type;
+        this.ctx = ctx;
     }
+
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        return new ViewHolder(LayoutInflater.from(ctx).inflate(R.layout.mould_item,null));
+        return new ViewHolder(LayoutInflater.from(ctx).inflate(R.layout.mould_item, null));
     }
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        MouldEntity entity=mouldItems.get(position);
-
-        holder.tv_describe.setText(Tools.isEmpty(entity.getDescribe())?"暂无描述":entity.getDescribe());
+        MouldEntity entity = mouldItems.get(position);
+        holder.tv_describe.setText(Tools.isEmpty(entity.getDescribe()) ? "暂无描述" : entity.getDescribe());
         holder.tv_revise.setText(Tools.getFormatTime(entity.getLastRevise(), "yyyy/MM/dd"));
         holder.tv_title.setText(entity.getTitle());
-        ImgLoadUtils.loadImageRes(entity.getIcPath(),holder.iv_icon);
-        if(type==0){//模版不显示状态
+        ImgLoadUtils.loadImageRes(entity.getIcPath(), holder.iv_icon);
+        if (type == 0) {//模版不显示状态
             holder.tv_state.setVisibility(View.GONE);
-        }else{//审计显示状态
+        } else {//审计显示状态
             holder.tv_state.setVisibility(View.VISIBLE);
-            if(entity.getState()==2){//完成
+            if (entity.getState() == 2) {//完成
                 holder.tv_state.setText("已完成");
                 holder.tv_state.setTextColor(Color.parseColor("#90C634"));
-            }else{
+            } else {
                 holder.tv_state.setText("未完成");
                 holder.tv_state.setTextColor(Color.RED);
             }
         }
         holder.item.setTag(position);
         holder.item.setOnClickListener(this);
+        holder.item.setOnLongClickListener(this);
     }
 
     @Override
     public int getItemCount() {
-        return mouldItems==null?0:mouldItems.size();
+        return mouldItems == null ? 0 : mouldItems.size();
     }
 
     @Override
     public void onClick(View v) {
-    int position= (Integer) v.getTag();
-        MouldEntity entity=mouldItems.get(position);
-        if(type==0){
-            InfoActivity.startAction(ctx,0,0,entity.getId());
-        }else{
-            InfoActivity.startAction(ctx,1,0,entity.getId());
+        int position = (Integer) v.getTag();
+        MouldEntity entity = mouldItems.get(position);
+        if (type == 0) {
+            InfoActivity.startAction(ctx, 0, 0, entity.getId());
+        } else {
+            InfoActivity.startAction(ctx, 1, 0, entity.getId());
         }
     }
 
-    class ViewHolder extends RecyclerView.ViewHolder{
+    @Override
+    public boolean onLongClick(final View v) {
+        final int position = (Integer) v.getTag();
+        final MouldEntity entity = mouldItems.get(position);
+        AlertDialog.Builder builder = new AlertDialog.Builder(v.getContext());
+        builder.setTitle("提示");
+        builder.setMessage(String.format("是否删除\"%s\"？", entity.getTitle()));
+        builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+                MouldHelper mouldHelper = new MouldHelper();
+                mouldHelper.deleteMould(entity.getId(), type == 1 ? true : false, new MouldHelper.DeleteMouldListener() {
+                    @Override
+                    public void error() {
+                        Tools.showToast(v.getContext(), "删除失败");
+                    }
+
+                    @Override
+                    public void success() {
+                        mouldItems.remove(position);
+                        notifyDataSetChanged();
+                    }
+                });
+
+            }
+        });
+        builder.setNegativeButton("取消", null);
+        builder.show();
+        return true;
+    }
+
+    class ViewHolder extends RecyclerView.ViewHolder {
         @ViewInject(R.id.tv_title)
         TextView tv_title;
         @ViewInject(R.id.tv_describe)
@@ -102,10 +140,11 @@ public class MouldAdapter  extends RecyclerView.Adapter<MouldAdapter.ViewHolder>
         View item;
         @ViewInject(R.id.iv_icon)
         CircleImageView iv_icon;
+
         public ViewHolder(View itemView) {
             super(itemView);
-            item=itemView;
-            ViewUtils.inject(this,itemView);
+            item = itemView;
+            ViewUtils.inject(this, itemView);
         }
     }
 }

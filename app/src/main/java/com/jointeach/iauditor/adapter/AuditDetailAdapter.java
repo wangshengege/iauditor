@@ -2,11 +2,14 @@ package com.jointeach.iauditor.adapter;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ExpandableListView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -187,6 +190,28 @@ public class AuditDetailAdapter extends BaseExpandableListAdapter {
                 pop.getPop().showAsDropDown(v);
             }
         });
+        holder.et_describe.setText(entity.getDescribe());
+        holder.et_describe.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                entity.setDescribe(s.toString());
+                try {
+                    AppDao.db.saveOrUpdate(entity);
+                } catch (DbException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
        switch (entity.getState()){
            case 1:
                holder.setNoState();
@@ -287,6 +312,8 @@ public class AuditDetailAdapter extends BaseExpandableListAdapter {
         View ll_data;
         Button add;
         LinearLayout ll_gallery;
+        EditText et_describe;
+        ImageView iv_ok;
         public ViewHolder(View itemView) {
             this.itemView = itemView;
             tv_title = (TextView) itemView.findViewById(R.id.tv_title);
@@ -296,6 +323,8 @@ public class AuditDetailAdapter extends BaseExpandableListAdapter {
             ll_data=itemView.findViewById(R.id.ll_data);
             add= (Button) itemView.findViewById(R.id.btn_addpic);
             ll_gallery= (LinearLayout) itemView.findViewById(R.id.ll_gallery);
+            et_describe= (EditText) itemView.findViewById(R.id.et_describe);
+            iv_ok= (ImageView) itemView.findViewById(R.id.iv_ok);
         }
         public void setNoState(){
             btn_qus_yes.setSelected(false);
@@ -317,6 +346,7 @@ public class AuditDetailAdapter extends BaseExpandableListAdapter {
         pic.setImgPath(iconP);
         pic.setQusId(picItem.getId());
         pic.setgId(picItem.getgId());
+        pic.setmId(picItem.getmId());
         try {
             AppDao.db.save(pic);
             notifyDataSetChanged();

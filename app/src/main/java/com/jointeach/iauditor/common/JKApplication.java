@@ -1,5 +1,9 @@
 package com.jointeach.iauditor.common;
 
+import android.app.Service;
+import android.os.Vibrator;
+
+import com.baidu.mapapi.SDKInitializer;
 import com.jointeach.iauditor.MainActivity;
 import com.nostra13.universalimageloader.cache.disc.impl.UnlimitedDiscCache;
 import com.nostra13.universalimageloader.cache.memory.impl.WeakMemoryCache;
@@ -22,6 +26,7 @@ import java.io.File;
  */
 public class JKApplication extends MyApplication {
     private static JKApplication ourInstance;
+    public LocationService locationService;
     public static JKApplication getInstance() {
         if(ourInstance==null){
             ourInstance=new JKApplication();
@@ -34,12 +39,12 @@ public class JKApplication extends MyApplication {
         ctx=getApplicationContext();
         //CrashHandler.getInstance().init(ctx, MainActivity.class);
         CrashHandler.getInstance().init(ctx);
+        initImageLoader();
+        locationService = new LocationService(ctx);
+        SDKInitializer.initialize(ctx);
+    }
+    private void initImageLoader(){
         File cacheDir = StorageUtils.getOwnCacheDirectory(getApplicationContext(), "safecoo/Cache");
-        // This configuration tuning is custom. You can tune every option, you
-        // may tune some of them,
-        // or you can create default configuration by
-        // ImageLoaderConfiguration.createDefault(this);
-        // method.
         ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(getApplicationContext())
                 .memoryCacheExtraOptions(480, 800)
                 .threadPoolSize(2)

@@ -14,6 +14,16 @@ public class AuditItemEntity extends QusBaseEntity implements Cloneable {
     private int state;//审计状态信息
     private int mId;
     private int gId;
+    private String describe="";
+
+    public String getDescribe() {
+        return describe;
+    }
+
+    public void setDescribe(String describe) {
+        this.describe = describe;
+    }
+
     public int getgId() {
         return gId;
     }

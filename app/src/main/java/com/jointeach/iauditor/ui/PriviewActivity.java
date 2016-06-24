@@ -97,6 +97,7 @@ public class PriviewActivity extends AbstractBaseActivity {
                         tv_priview.append("\t不适用\n");
                         break;
                 }
+                tv_priview.append("备注："+aE.getDescribe()+"\n");
                 tv_priview.append("\n");
             } else {
                 tv_priview.append("\n" + en.getTitle() + "\n\n");

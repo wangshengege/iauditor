@@ -17,6 +17,11 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    sourceSets {
+        main() {
+            jniLibs.srcDirs = ['libs']
+        }
+    }
 }
 
 dependencies {
@@ -25,4 +30,6 @@ dependencies {
     compile 'com.android.support:appcompat-v7:22.2.1'
     compile 'com.android.support:design:22.2.1'
     compile 'de.hdodenhof:circleimageview:2.0.0'
+    compile files('libs/locSDK_6.23.jar')
+    compile files('libs/baidumapapi_v3_5_0.jar')
 }

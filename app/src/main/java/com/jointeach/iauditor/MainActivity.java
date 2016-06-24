@@ -116,11 +116,11 @@ public class MainActivity extends AbstractBaseActivity implements View.OnClickLi
     @OnClick(R.id.fab)
     private void addItem(View v){
 
-       /* if(index==0){//添加模版
+        if(index==0){//添加模版
             CreateMouldActivity.startAction(self);
         }else{//添加审计
             SelectMouldActivity.actionStart(self);
-        }*/
+        }
     }
     //初始化界面
     private void initView(){

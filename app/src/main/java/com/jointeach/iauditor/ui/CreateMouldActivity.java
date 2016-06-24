@@ -20,6 +20,7 @@ import android.view.View;
 
 import com.jointeach.iauditor.R;
 import com.jointeach.iauditor.adapter.CreateMouldAdapter;
+import com.jointeach.iauditor.common.MouldHelper;
 import com.lidroid.xutils.view.annotation.ViewInject;
 import com.lidroid.xutils.view.annotation.event.OnClick;
 import com.nineoldandroids.animation.Animator;
@@ -47,7 +48,7 @@ public class CreateMouldActivity  extends AbstractBaseActivity{
     private CreateMouldAdapter mouldAdapter;
     //页面位置
     private int index;
-    private int mId;
+    private int mId=-1;
     //0是创建模版1是编辑模版
     private int type;
     public static void startAction(Context ctx,int mId){
@@ -58,7 +59,7 @@ public class CreateMouldActivity  extends AbstractBaseActivity{
     }
     public static void startAction(Context ctx){
         Intent intent=new Intent(ctx,CreateMouldActivity.class);
-        intent.putExtra("type",1);
+        intent.putExtra("type",0);
         ctx.startActivity(intent);
     }
     @Override
@@ -69,13 +70,30 @@ public class CreateMouldActivity  extends AbstractBaseActivity{
         type=intent.getIntExtra("type",0);
         if(type==0) {//创建模版
             toolbar.setTitle(getResources().getString(R.string.creat_mould));
+            MouldHelper mouldHelper=new MouldHelper();
+            mouldHelper.createMould(new MouldHelper.CreateMouldListener() {
+                @Override
+                public void error() {
+                    Tools.showToast(self,"创建失败");
+                    finish();
+                }
+
+                @Override
+                public void success(int mId) {
+                    CreateMouldActivity.this.mId=mId;
+                    toolbar.setTitleTextColor(Color.WHITE);
+                    setSupportActionBar(toolbar);
+                    initView();
+                }
+            });
         }else{//编辑模版
             toolbar.setTitle(getResources().getString(R.string.edit_mould));
             mId=intent.getIntExtra("mId",-1);
+            toolbar.setTitleTextColor(Color.WHITE);
+            setSupportActionBar(toolbar);
+            initView();
         }
-        toolbar.setTitleTextColor(Color.WHITE);
-        setSupportActionBar(toolbar);
-        initView();
+
     }
 
     private void initView() {
@@ -184,6 +202,14 @@ public class CreateMouldActivity  extends AbstractBaseActivity{
         super.onActivityResult(requestCode, resultCode, data);
         if(mouldAdapter!=null && mouldAdapter.getItem(2)!=null){
             mouldAdapter.getItem(2).onActivityResult(requestCode,resultCode,data);
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        if(type==0){
+
         }
     }
 }

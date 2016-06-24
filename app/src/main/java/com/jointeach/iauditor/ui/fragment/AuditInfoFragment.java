@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -14,8 +15,10 @@ import com.jointeach.iauditor.common.JKApplication;
 import com.jointeach.iauditor.dao.AppDao;
 import com.jointeach.iauditor.entity.CoverEntity;
 import com.jointeach.iauditor.entity.InfoEntity;
+import com.jointeach.iauditor.entity.LocationBack;
 import com.jointeach.iauditor.entity.MouldEntity;
 import com.jointeach.iauditor.entity.SelectAccontBack;
+import com.jointeach.iauditor.ui.MapActivity;
 import com.jointeach.iauditor.ui.SelectAccountActivity;
 import com.jointeach.iauditor.ui.base.BaseAuditFragment;
 import com.lidroid.xutils.DbUtils;
@@ -61,6 +64,7 @@ public class AuditInfoFragment extends BaseAuditFragment {
         mId=bundle.getInt("mId");
         initData();
         EventBus.getDefault().register(this,"getAccounts",SelectAccontBack.class);
+        EventBus.getDefault().register(this,"locationBack",LocationBack.class);
     }
     private void getAccounts(SelectAccontBack accontBack){
        eds[eds.length-1].setText(accontBack.getAccount());
@@ -103,8 +107,8 @@ public class AuditInfoFragment extends BaseAuditFragment {
         }
         infos.add(new InfoEntity("标题",entity.getTitle()));
         infos.add(new InfoEntity(typs==null?"作者":typs.get(2),entity.getAuthor()));
-        infos.add(new InfoEntity(typs==null?"位置":typs.get(3),entity.getLocation()));
-        infos.add(new InfoEntity(typs==null?"参与人员":typs.get(4),entity.getParticipants()));
+        infos.add(new InfoEntity(typs==null?"位置":typs.get(3),entity.getLocation(),3));
+        infos.add(new InfoEntity(typs==null?"参与人员":typs.get(4),entity.getParticipants(),4));
         if(eds==null){
             eds=new EditText[infos.size()];
         }
@@ -115,10 +119,22 @@ public class AuditInfoFragment extends BaseAuditFragment {
             EditText et= (EditText) v.findViewById(R.id.et_title);
             eds[i]=et;
             tv.setText(in.getTitle());
-            et.setText(in.getSubTitle());
-            if(i==infos.size()-1){
-                et.setFocusable(false);
-                et.setOnClickListener(new View.OnClickListener() {
+            et.setText(in.getSubTitle());//设置标题信息
+            if(in.getType()==3){//位置的信息
+            View loc=v.findViewById(R.id.iv_location);
+                loc.setVisibility(View.VISIBLE);
+                loc.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        MapActivity.startAction(self);
+                    }
+                });
+            }
+            if(in.getType()==4){//参与人员
+                ImageView loc= (ImageView) v.findViewById(R.id.iv_location);
+                loc.setImageResource(R.drawable.icon_industry_general);
+                loc.setVisibility(View.VISIBLE);
+                loc.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         SelectAccountActivity.startAction(self,0);
@@ -128,7 +144,10 @@ public class AuditInfoFragment extends BaseAuditFragment {
             ll_content.addView(v);
         }
     }
-
+    //返回位置
+    public void locationBack(LocationBack locationBack){
+        eds[2].setText(String.format("%s\n[%s,%s]",locationBack.location,String.valueOf(locationBack.latitude),String.valueOf(locationBack.longitude)));
+    }
     @Override
     public void audit() {
         super.audit();
